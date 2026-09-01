@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lord Perfumaria — Perfumaria de Nicho Árabe</title>
+<meta name="description" content="Perfumes de nicho árabe selecionados. Fragrâncias marcantes e duradouras.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div>
+      <p class="brand-name">LORD</p>
+      <p class="brand-tag">Perfumaria de Nicho Árabe</p>
+    </div>
+    <nav class="site-nav">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <h1>Fragrâncias que <span class="accent">marcam presença</span></h1>
+      <p class="hero-desc">Perfumes de nicho árabe selecionados a dedo — intensidade, sofisticação e duração que só os grandes óleos perfumísticos entregam.</p>
+    </div>
+  </section>
+
+  <section id="catalogo" class="section">
+    <div class="container">
+      <p class="eyebrow">Nossa seleção</p>
+      <h2>Catálogo</h2>
+      <div class="produtos-grid" id="produtos-lista">
+        <p class="loading-msg">Carregando produtos...</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato" class="section">
+    <div class="container" style="text-align:center;">
+      <p class="eyebrow">Fale com a gente</p>
+      <h2>Contato</h2>
+      <p style="color:var(--text-muted);">Dúvidas sobre algum perfume? Chama no WhatsApp.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>© <span id="ano"></span> Lord Perfumaria. Todos os direitos reservados.</p>
+    <p><a href="admin.html" class="admin-link">Área administrativa</a></p>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
