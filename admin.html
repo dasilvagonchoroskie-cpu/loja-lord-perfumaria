@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Área Administrativa — Lord Perfumaria</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div>
+      <p class="brand-name">LORD</p>
+      <p class="brand-tag">Área administrativa</p>
+    </div>
+    <nav class="site-nav">
+      <a href="index.html">Voltar à loja</a>
+    </nav>
+  </div>
+</header>
+
+<div class="admin-wrap">
+
+  <div id="login-screen" class="admin-box">
+    <h2>Entrar</h2>
+    <div class="admin-field">
+      <input type="email" id="login-email" placeholder="Seu e-mail">
+    </div>
+    <div class="admin-field">
+      <input type="password" id="login-senha" placeholder="Sua senha">
+    </div>
+    <button class="admin-btn" onclick="fazerLogin()">Entrar</button>
+    <p id="login-erro" class="error-msg"></p>
+  </div>
+
+  <div id="painel" style="display:none">
+
+    <div class="admin-box">
+      <h2>Produtos</h2>
+      <div id="lista-produtos"></div>
+      <hr style="border-color: var(--border); margin: 16px 0;">
+      <p style="font-size:13px; color: var(--text-muted); margin-bottom: 10px;">Adicionar novo perfume</p>
+      <div class="admin-field">
+        <label>Nome do perfume</label>
+        <input type="text" id="novo-produto-nome">
+      </div>
+      <div class="admin-field">
+        <label>Descrição (notas, ocasião, etc.)</label>
+        <textarea id="novo-produto-descricao"></textarea>
+      </div>
+      <div class="admin-field">
+        <label>Preço (só números, ex: 189.90)</label>
+        <input type="text" id="novo-produto-preco" placeholder="0.00">
+      </div>
+      <div class="admin-field">
+        <label>Foto do perfume</label>
+        <input type="file" id="novo-produto-foto" accept="image/*">
+        <p id="novo-produto-foto-status" style="font-size:12px;color:var(--text-muted);margin-top:6px;"></p>
+      </div>
+      <button class="admin-btn" onclick="adicionarProduto()">Adicionar produto</button>
+    </div>
+
+    <div class="admin-box">
+      <h2>Sua conta</h2>
+      <button class="admin-btn secondary" onclick="trocarSenha()">Trocar minha senha</button>
+      <button class="admin-btn secondary" onclick="sair()">Sair</button>
+      <p id="senha-msg" class="success-msg"></p>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
