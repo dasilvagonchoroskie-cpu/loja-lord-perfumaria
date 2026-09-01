@@ -1,9 +1,9 @@
 document.getElementById('ano').textContent = new Date().getFullYear();
 
-// TROCAR pelo número de WhatsApp do Juliano quando tiver (com DDI e DDD, ex: 5564999998888)
+// Número de WhatsApp da loja (Juliano)
 const WHATSAPP_LOJA = '5564992221728';
 
-if (WHATSAPP_LOJA !== '5564992221728') {
+if (WHATSAPP_LOJA) {
   const btn = document.getElementById('whatsapp-btn');
   btn.href = 'https://wa.me/' + WHATSAPP_LOJA;
   btn.style.display = 'flex';
