@@ -3,6 +3,12 @@ document.getElementById('ano').textContent = new Date().getFullYear();
 // TROCAR pelo número de WhatsApp do Juliano quando tiver (com DDI e DDD, ex: 5564999998888)
 const WHATSAPP_LOJA = 'COLOQUE_O_NUMERO_AQUI';
 
+if (WHATSAPP_LOJA !== 'COLOQUE_O_NUMERO_AQUI') {
+  const btn = document.getElementById('whatsapp-btn');
+  btn.href = 'https://wa.me/' + WHATSAPP_LOJA;
+  btn.style.display = 'flex';
+}
+
 db.collection('produtos').get().then(function(snapshot) {
   const container = document.getElementById('produtos-lista');
   container.innerHTML = '';
