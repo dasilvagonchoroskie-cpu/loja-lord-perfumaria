@@ -1,13 +1,10 @@
-// PLACEHOLDER — substituir pelos dados reais assim que o Firebase
-// da loja Lord Perfumaria for criado (ver PROJETO-lord-perfumaria.md,
-// seção 7, passo 2).
 const firebaseConfig = {
-  apiKey: "COLOQUE_AQUI",
-  authDomain: "COLOQUE_AQUI",
-  projectId: "COLOQUE_AQUI",
-  storageBucket: "COLOQUE_AQUI",
-  messagingSenderId: "COLOQUE_AQUI",
-  appId: "COLOQUE_AQUI"
+  apiKey: "AIzaSyCuMcwoWZcTKavvYd1HCPsGYWLWQoFmXqY",
+  authDomain: "lord-perfumaria-156f1.firebaseapp.com",
+  projectId: "lord-perfumaria-156f1",
+  storageBucket: "lord-perfumaria-156f1.firebasestorage.app",
+  messagingSenderId: "788098923932",
+  appId: "1:788098923932:web:9fb840866c38f987839c59"
 };
 
 firebase.initializeApp(firebaseConfig);
