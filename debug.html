@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico — Lord Perfumaria</title>
+<style>
+  body { background:#111; color:#eee; font-family: monospace; font-size:14px; padding:16px; line-height:1.6; }
+  h1 { font-size:18px; color:#C9A15A; }
+  #log { white-space: pre-wrap; background:#000; padding:12px; border-radius:8px; margin-top:16px; min-height:200px; }
+  .ok { color:#6ee7a0; }
+  .erro { color:#ff6b6b; }
+  .info { color:#8ab4f8; }
+  button { background:#C9A15A; border:none; padding:12px 20px; border-radius:8px; font-size:15px; font-weight:bold; margin-top:12px; }
+</style>
+</head>
+<body>
+
+<h1>Diagnóstico — Lord Perfumaria</h1>
+<p>Essa página faz um teste isolado: cria 1 documento de teste, e confere se ele continua existindo depois de 3s, 10s e 30s. Tudo aparece registrado abaixo, sozinho, sem precisar fazer nada além de esperar.</p>
+
+<button onclick="rodarTeste()">Rodar teste agora</button>
+
+<div id="log">Aguardando início do teste...</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+const logEl = document.getElementById('log');
+function log(msg, tipo) {
+  const hora = new Date().toLocaleTimeString('pt-BR');
+  const span = document.createElement('div');
+  span.className = tipo || '';
+  span.textContent = '[' + hora + '] ' + msg;
+  logEl.appendChild(span);
+}
+
+function rodarTeste() {
+  logEl.innerHTML = '';
+  log('Verificando login...', 'info');
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) {
+      log('NÃO ESTÁ LOGADO. Faça login em admin.html primeiro, nessa mesma aba/navegador, e depois volte aqui.', 'erro');
+      return;
+    }
+    log('Logado como: ' + user.email, 'ok');
+    log('UID: ' + user.uid, 'info');
+
+    const dadosTeste = {
+      nome: 'DIAGNOSTICO-' + Date.now(),
+      preco: 1,
+      criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    log('Tentando CRIAR documento de teste...', 'info');
+    db.collection('produtos').add(dadosTeste)
+      .then(function(docRef) {
+        log('CRIADO com sucesso. ID: ' + docRef.id, 'ok');
+        agendarChecagens(docRef.id);
+      })
+      .catch(function(error) {
+        log('ERRO AO CRIAR: [' + error.code + '] ' + error.message, 'erro');
+      });
+  }, function(error) {
+    log('ERRO no onAuthStateChanged: ' + error.message, 'erro');
+  });
+}
+
+function agendarChecagens(id) {
+  [3000, 10000, 30000].forEach(function(delay) {
+    setTimeout(function() {
+      log('Checando se ID ' + id + ' ainda existe (após ' + (delay/1000) + 's)...', 'info');
+      db.collection('produtos').doc(id).get()
+        .then(function(doc) {
+          if (doc.exists) {
+            log('AINDA EXISTE após ' + (delay/1000) + 's. Dados: ' + JSON.stringify(doc.data()), 'ok');
+          } else {
+            log('SUMIU! Não existe mais após ' + (delay/1000) + 's.', 'erro');
+          }
+        })
+        .catch(function(error) {
+          log('ERRO AO CHECAR: [' + error.code + '] ' + error.message, 'erro');
+        });
+    }, delay);
+  });
+
+  log('Também tentando LISTAR toda a coleção "produtos" agora...', 'info');
+  db.collection('produtos').get()
+    .then(function(snapshot) {
+      log('Listagem retornou ' + snapshot.size + ' documento(s).', snapshot.size > 0 ? 'ok' : 'erro');
+      snapshot.forEach(function(doc) {
+        log('  -> ' + doc.id + ': ' + JSON.stringify(doc.data()));
+      });
+    })
+    .catch(function(error) {
+      log('ERRO AO LISTAR: [' + error.code + '] ' + error.message, 'erro');
+    });
+}
+</script>
+</body>
+</html>
