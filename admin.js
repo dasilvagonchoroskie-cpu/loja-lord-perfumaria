@@ -71,8 +71,22 @@ function trocarSenha() {
 }
 
 // ----- PRODUTOS -----
+function mostrarAvisoTecnico(texto, tipo) {
+  let aviso = document.getElementById('aviso-tecnico');
+  if (!aviso) {
+    aviso = document.createElement('div');
+    aviso.id = 'aviso-tecnico';
+    aviso.style.cssText = 'position:fixed;top:0;left:0;right:0;padding:14px;font-size:13px;font-family:monospace;z-index:9999;white-space:pre-wrap;';
+    document.body.prepend(aviso);
+  }
+  aviso.style.background = tipo === 'erro' ? '#5c1a1a' : '#1a3d1a';
+  aviso.style.color = '#fff';
+  aviso.textContent = new Date().toLocaleTimeString('pt-BR') + ' — ' + texto;
+}
+
 function carregarProdutos() {
   db.collection('produtos').get().then(function(snapshot) {
+    mostrarAvisoTecnico('Leitura OK. Documentos encontrados no banco: ' + snapshot.size, 'ok');
     const container = document.getElementById('lista-produtos');
     container.innerHTML = '';
     snapshot.forEach(function(doc) {
@@ -93,6 +107,8 @@ function carregarProdutos() {
       `;
       container.appendChild(row);
     });
+  }).catch(function(error) {
+    mostrarAvisoTecnico('ERRO AO LER: [' + error.code + '] ' + error.message, 'erro');
   });
 }
 
