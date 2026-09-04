@@ -1,6 +1,6 @@
 // ===== CONFIGURAÇÃO DO IMGBB (upload automático de fotos) =====
 // Reaproveitando a mesma chave já usada no site institucional.
-const IMGBB_API_KEY = '61956ffcfe2f0d78692db113027c5319';
+const IMGBB_API_KEY = 'c5f5341bea7eb7169bd38071a172a59f';
 
 function uploadImagemImgBB(arquivo) {
   return new Promise(function(resolve, reject) {
