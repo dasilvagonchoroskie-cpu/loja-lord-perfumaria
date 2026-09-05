@@ -1,5 +1,5 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyAGuOxDpye_kiyHxutNRRNs3Drrv46Bdb4",
+  apiKey: "AIzaSyAGuOx0Dpye_kiyHXutNRRNs3Drrv46BdB4",
   authDomain: "lord-perfumaria-51e77.firebaseapp.com",
   projectId: "lord-perfumaria-51e77",
   storageBucket: "lord-perfumaria-51e77.firebasestorage.app",
@@ -10,4 +10,3 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
-
