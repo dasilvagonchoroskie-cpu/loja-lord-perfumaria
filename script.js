@@ -30,7 +30,7 @@ db.collection('produtos').get().then(function(snapshot) {
       : '';
 
     const mensagem = encodeURIComponent('Olá! Tenho interesse no perfume: ' + (data.nome || ''));
-    const linkComprar = WHATSAPP_LOJA !== '5564992221728'
+    const linkComprar = WHATSAPP_LOJA
       ? `https://wa.me/${WHATSAPP_LOJA}?text=${mensagem}`
       : '#';
 
