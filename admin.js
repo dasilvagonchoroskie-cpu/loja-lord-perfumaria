@@ -51,7 +51,7 @@ function fazerLogin() {
   erroEl.textContent = '';
 
   auth.signInWithEmailAndPassword(email, senha).catch(function(error) {
-    erroEl.textContent = 'E-mail ou senha incorretos.';
+    erroEl.textContent = 'Erro (' + error.code + '): ' + error.message;
     console.error(error);
   });
 }
