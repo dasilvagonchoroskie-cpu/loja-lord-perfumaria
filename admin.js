@@ -76,8 +76,9 @@ function mostrarAvisoTecnico(texto, tipo) {
   if (!aviso) {
     aviso = document.createElement('div');
     aviso.id = 'aviso-tecnico';
-    aviso.style.cssText = 'position:fixed;top:0;left:0;right:0;padding:14px;font-size:13px;font-family:monospace;z-index:9999;white-space:pre-wrap;';
-    document.body.prepend(aviso);
+    aviso.style.cssText = 'padding:10px 14px;font-size:12px;font-family:monospace;white-space:pre-wrap;margin:0;';
+    const painelHeader = document.querySelector('.site-header');
+    painelHeader.insertAdjacentElement('afterend', aviso);
   }
   aviso.style.background = tipo === 'erro' ? '#5c1a1a' : '#1a3d1a';
   aviso.style.color = '#fff';
