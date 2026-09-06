@@ -64,6 +64,36 @@
     </div>
 
     <div class="admin-box">
+      <h2>Configurações da loja</h2>
+      <p style="font-size:13px; color: var(--text-muted); margin-bottom: 18px;">Essas informações aparecem na página inicial da loja. Deixe em branco pra manter o padrão.</p>
+      <div class="admin-field">
+        <label>E-mail de contato</label>
+        <input type="email" id="config-email" placeholder="lordperfumaria1@gmail.com">
+      </div>
+      <div class="admin-field">
+        <label>WhatsApp (com DDD e código do país, só números — ex: 5564999999999)</label>
+        <input type="text" id="config-whatsapp" placeholder="5564999999999">
+      </div>
+      <div class="admin-field">
+        <label>Frase de destaque (título grande da página inicial)</label>
+        <input type="text" id="config-hero-titulo" placeholder="Fragrâncias que permanecem na lembrança">
+      </div>
+      <div class="admin-field">
+        <label>Texto de apoio (abaixo do título)</label>
+        <textarea id="config-hero-descricao" placeholder="Óleos perfumísticos de nicho, concentrados e duradouros..."></textarea>
+      </div>
+      <div class="admin-field">
+        <label>Banner da marca (imagem larga, tipo cartaz — aparece no topo do site)</label>
+        <div id="banner-preview-wrap"></div>
+        <input type="file" id="config-banner-foto" accept="image/*">
+        <p id="config-banner-status" style="font-size:12px;color:var(--text-muted);margin-top:6px;"></p>
+        <button class="admin-btn secondary" type="button" onclick="removerBanner()" style="margin-top:10px;">Remover banner</button>
+      </div>
+      <button class="admin-btn" onclick="salvarConfiguracoes()">Salvar configurações</button>
+      <p id="config-msg" class="success-msg"></p>
+    </div>
+
+    <div class="admin-box">
       <h2>Sua conta</h2>
       <button class="admin-btn secondary" onclick="trocarSenha()">Trocar minha senha</button>
       <button class="admin-btn secondary" onclick="sair()">Sair</button>
