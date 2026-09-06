@@ -1,0 +1,368 @@
+/* ============================================
+   LORD PERFUMARIA — sistema visual
+   Paleta: espresso quente + latão antigo
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg: #14100D;
+  --bg-elevated: #1E1811;
+  --bg-elevated-2: #251D14;
+  --border: #3A2E20;
+  --accent: #C9A24B;
+  --accent-dim: #8A6F3A;
+  --text: #EDE6D8;
+  --text-muted: #9C8F7D;
+  --danger: #B5504F;
+  --danger-bg: #2A1616;
+  --success: #7C9468;
+  --success-bg: #182119;
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+a { color: inherit; }
+
+h1, h2, h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  margin: 0;
+  color: var(--text);
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.brand-name {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  margin: 0;
+}
+
+.brand-tag {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.site-nav a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 15px;
+  margin-left: 28px;
+  transition: color 0.2s ease;
+}
+.site-nav a:hover, .site-nav a:focus-visible { color: var(--accent); }
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 72px 0 56px;
+}
+
+.hero .container {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.hero h1 {
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1.15;
+  max-width: 13ch;
+}
+
+.hero .accent { color: var(--accent); }
+
+.hero-rule {
+  width: 64px;
+  height: 2px;
+  background: var(--accent);
+  margin: 22px 0;
+  border: none;
+}
+
+.hero-desc {
+  color: var(--text-muted);
+  font-size: 17px;
+  max-width: 44ch;
+  margin: 0;
+}
+
+.hero-art {
+  display: flex;
+  justify-content: center;
+}
+.hero-art svg { width: 100%; max-width: 220px; height: auto; }
+
+@media (max-width: 720px) {
+  .hero .container { grid-template-columns: 1fr; }
+  .hero-art { order: -1; max-width: 140px; margin: 0 auto; }
+}
+
+/* ---------- Sections ---------- */
+.section { padding: 56px 0; border-top: 1px solid var(--border); }
+
+.section h2 {
+  font-size: 30px;
+  margin-bottom: 32px;
+}
+
+/* ---------- Catálogo ---------- */
+.produtos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 32px 28px;
+}
+
+.produto-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.produto-img, .produto-img-placeholder {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+
+.produto-img-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--accent-dim);
+}
+.produto-img-placeholder svg { width: 40px; height: 40px; opacity: 0.7; }
+.produto-img-placeholder span { font-size: 12px; color: var(--text-muted); }
+
+.produto-info { padding-top: 14px; }
+
+.produto-info h3 {
+  font-size: 19px;
+  margin-bottom: 6px;
+}
+
+.produto-info p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+
+.produto-preco {
+  font-family: var(--serif);
+  color: var(--accent);
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.produto-comprar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 14px;
+  border-bottom: 1px solid var(--accent-dim);
+  padding-bottom: 3px;
+  align-self: flex-start;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.produto-comprar:hover, .produto-comprar:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.loading-msg { color: var(--text-muted); font-size: 15px; }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 0 40px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.site-footer .container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.admin-link { color: var(--text-muted); text-decoration: none; }
+.admin-link:hover { color: var(--accent); }
+
+/* ---------- WhatsApp flutuante ---------- */
+.whatsapp-float {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #3C7A57;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  z-index: 50;
+  transition: transform 0.2s ease;
+}
+.whatsapp-float:hover { transform: scale(1.06); }
+
+/* ---------- Admin ---------- */
+.admin-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-box {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  padding: 28px;
+}
+
+.admin-box h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.admin-field { margin-bottom: 16px; }
+
+.admin-field label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.admin-field input,
+.admin-field textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 14px;
+  font-family: var(--sans);
+  font-size: 15px;
+  border-radius: 2px;
+}
+.admin-field input:focus,
+.admin-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.admin-field textarea { min-height: 80px; resize: vertical; }
+
+.admin-btn {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 12px 22px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+.admin-btn:hover { background: #DCB667; }
+.admin-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.admin-btn.secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  margin-right: 10px;
+  margin-top: 8px;
+}
+.admin-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+.admin-btn.danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+.admin-btn.danger:hover { background: var(--danger-bg); }
+
+.error-msg {
+  color: var(--danger);
+  font-size: 13px;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+.success-msg {
+  color: var(--success);
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.item-row:last-child { border-bottom: none; }
+
+.item-info { display: flex; flex-direction: column; gap: 4px; }
+.item-info strong { font-family: var(--serif); font-weight: 500; font-size: 16px; }
+.item-info span { font-size: 13px; color: var(--text-muted); }
+
+.item-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.item-actions .admin-btn { padding: 8px 14px; font-size: 13px; }
+
+#aviso-tecnico {
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 12px;
+}
