@@ -11,7 +11,7 @@
 <header class="site-header">
   <div class="container header-inner">
     <div>
-      <p class="brand-name">LORD</p>
+      <p class="brand-name">Lord</p>
       <p class="brand-tag">Área administrativa</p>
     </div>
     <nav class="site-nav">
@@ -25,9 +25,11 @@
   <div id="login-screen" class="admin-box">
     <h2>Entrar</h2>
     <div class="admin-field">
-      <input type="email" id="login-email" placeholder="Seu e-mail">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seuemail@exemplo.com">
     </div>
     <div class="admin-field">
+      <label>Senha</label>
       <input type="password" id="login-senha" placeholder="Sua senha">
     </div>
     <button class="admin-btn" onclick="fazerLogin()">Entrar</button>
@@ -39,8 +41,8 @@
     <div class="admin-box">
       <h2>Produtos</h2>
       <div id="lista-produtos"></div>
-      <hr style="border-color: var(--border); margin: 16px 0;">
-      <p style="font-size:13px; color: var(--text-muted); margin-bottom: 10px;">Adicionar novo perfume</p>
+      <hr style="border-color: var(--border); margin: 20px 0;">
+      <p style="font-size:13px; color: var(--text-muted); margin-bottom: 14px;">Adicionar novo perfume</p>
       <div class="admin-field">
         <label>Nome do perfume</label>
         <input type="text" id="novo-produto-nome">
