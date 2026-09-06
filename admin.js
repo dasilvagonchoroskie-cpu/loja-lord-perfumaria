@@ -33,6 +33,7 @@ auth.onAuthStateChanged(function(user) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('painel').style.display = 'block';
     carregarProdutos();
+    carregarConfiguracoes();
   } else {
     document.getElementById('login-screen').style.display = 'block';
     document.getElementById('painel').style.display = 'none';
@@ -62,6 +63,79 @@ function trocarSenha() {
     document.getElementById('senha-msg').textContent = 'Senha alterada com sucesso!';
   }).catch(function(error) {
     alert('Erro ao trocar senha: ' + error.message + '\n\nPode ser necessário sair e entrar de novo antes de trocar a senha.');
+  });
+}
+
+// ----- CONFIGURAÇÕES DA LOJA (e-mail, WhatsApp, textos da home, banner) -----
+const CONFIG_DOC = db.collection('config').doc('site');
+
+function carregarConfiguracoes() {
+  CONFIG_DOC.get().then(function(doc) {
+    const data = doc.exists ? doc.data() : {};
+    document.getElementById('config-email').value = data.email || '';
+    document.getElementById('config-whatsapp').value = data.whatsapp || '';
+    document.getElementById('config-hero-titulo').value = data.heroTitulo || '';
+    document.getElementById('config-hero-descricao').value = data.heroDescricao || '';
+    mostrarPreviewBanner(data.bannerUrl || '');
+  }).catch(function(error) {
+    console.error('Erro ao carregar configurações:', error);
+  });
+}
+
+function mostrarPreviewBanner(url) {
+  const wrap = document.getElementById('banner-preview-wrap');
+  wrap.innerHTML = url
+    ? '<img src="' + url + '" style="max-width:100%;display:block;margin-bottom:10px;border:1px solid var(--border);">'
+    : '<p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Nenhum banner definido ainda.</p>';
+}
+
+function salvarConfiguracoes() {
+  const msgEl = document.getElementById('config-msg');
+  const statusEl = document.getElementById('config-banner-status');
+  const arquivoInput = document.getElementById('config-banner-foto');
+  msgEl.textContent = '';
+
+  const dadosBase = {
+    email: document.getElementById('config-email').value.trim(),
+    whatsapp: document.getElementById('config-whatsapp').value.trim().replace(/\D/g, ''),
+    heroTitulo: document.getElementById('config-hero-titulo').value.trim(),
+    heroDescricao: document.getElementById('config-hero-descricao').value.trim()
+  };
+
+  function salvar(dadosExtra) {
+    CONFIG_DOC.set(Object.assign({}, dadosBase, dadosExtra || {}), { merge: true }).then(function() {
+      msgEl.textContent = 'Configurações salvas!';
+      carregarConfiguracoes();
+    }).catch(function(error) {
+      alert('Erro ao salvar configurações: [' + error.code + '] ' + error.message);
+    });
+  }
+
+  const arquivo = arquivoInput.files[0];
+  if (arquivo) {
+    statusEl.textContent = 'Enviando banner...';
+    uploadImagemImgBB(arquivo).then(function(resultado) {
+      statusEl.textContent = 'Banner enviado!';
+      arquivoInput.value = '';
+      salvar({ bannerUrl: resultado.url, bannerDeleteUrl: resultado.deleteUrl });
+    }).catch(function(erro) {
+      statusEl.textContent = '';
+      alert('Erro ao enviar o banner: ' + erro);
+    });
+  } else {
+    salvar();
+  }
+}
+
+function removerBanner() {
+  if (!confirm('Remover o banner da página inicial?')) return;
+  CONFIG_DOC.get().then(function(doc) {
+    const data = doc.exists ? doc.data() : {};
+    if (data.bannerDeleteUrl) tentarApagarDoImgBB(data.bannerDeleteUrl);
+    return CONFIG_DOC.set({ bannerUrl: '', bannerDeleteUrl: '' }, { merge: true });
+  }).then(function() {
+    document.getElementById('config-msg').textContent = 'Banner removido.';
+    carregarConfiguracoes();
   });
 }
 
