@@ -93,6 +93,16 @@ h1, h2, h3 {
 }
 .site-nav a:hover, .site-nav a:focus-visible { color: var(--accent); }
 
+/* ---------- Banner (opcional, definido pelo cliente no painel) ---------- */
+.banner-wrap { width: 100%; }
+.banner-img {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--border);
+}
+
 /* ---------- Hero ---------- */
 .hero {
   padding: 72px 0 56px;
