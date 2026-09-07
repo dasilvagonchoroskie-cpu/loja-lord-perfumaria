@@ -120,7 +120,6 @@ h1, h2, h3 {
   align-items: center;
 }
 
-/* Quando o banner substitui o frasco, o hero vira uma coluna só */
 .hero .container.sem-arte {
   grid-template-columns: 1fr;
   text-align: center;
@@ -250,19 +249,30 @@ h1, h2, h3 {
   margin-bottom: 8px;
 }
 
-.produto-comprar {
+.produto-acoes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.produto-comprar, .produto-pix-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   text-decoration: none;
+  background: none;
   color: var(--text);
+  font-family: var(--sans);
   font-size: 12px;
+  border: none;
   border-bottom: 1px solid var(--accent-dim);
-  padding-bottom: 2px;
-  align-self: flex-start;
+  padding: 0 0 2px;
+  cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
-.produto-comprar:hover, .produto-comprar:focus-visible {
+.produto-comprar:hover, .produto-comprar:focus-visible,
+.produto-pix-btn:hover, .produto-pix-btn:focus-visible {
   color: var(--accent);
   border-color: var(--accent);
 }
@@ -302,6 +312,74 @@ h1, h2, h3 {
   transition: transform 0.2s ease;
 }
 .whatsapp-float:hover { transform: scale(1.06); }
+
+/* ---------- Modal do Pix ---------- */
+.pix-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+.pix-modal-inner {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  padding: 28px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.pix-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 26px;
+  cursor: pointer;
+  line-height: 1;
+}
+.pix-modal-close:hover { color: var(--accent); }
+.pix-modal-valor {
+  font-family: var(--serif);
+  color: var(--accent);
+  font-size: 22px;
+  margin: 8px 0 18px;
+}
+#pix-qrcode {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 18px;
+  background: #fff;
+  padding: 10px;
+  width: fit-content;
+}
+.pix-modal-label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-align: left;
+}
+.pix-codigo-texto {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px;
+  font-size: 11px;
+  font-family: monospace;
+  min-height: 70px;
+  resize: none;
+  margin-bottom: 14px;
+}
 
 /* ---------- Admin ---------- */
 .admin-wrap {
