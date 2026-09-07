@@ -168,6 +168,10 @@ function aplicarConfiguracoes(config) {
     };
   }
 
+  if (config.linkAdminVisivel !== false) {
+    document.getElementById('admin-link-wrap').style.display = 'block';
+  }
+
   return whatsapp;
 }
 
