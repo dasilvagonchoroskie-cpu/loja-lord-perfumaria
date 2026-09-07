@@ -3,6 +3,9 @@ document.getElementById('ano').textContent = new Date().getFullYear();
 // Valores padrão — usados até o Juliano configurar pelo painel administrativo
 const WHATSAPP_PADRAO = '5564992221728';
 const EMAIL_PADRAO = 'lordperfumaria1@gmail.com';
+const NOME_LOJA = 'LORD PERFUMARIA';
+
+let PIX_CONFIG = null; // definido em aplicarConfiguracoes() se houver chave Pix cadastrada
 
 const PLACEHOLDER_ICON = `
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -24,6 +27,100 @@ function extrairYoutubeId(url) {
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
   return match ? match[1] : null;
 }
+
+// ===================== PIX (BR Code / EMV QR estático, padrão Banco Central) =====================
+
+function crc16Pix(str) {
+  let crc = 0xFFFF;
+  for (let i = 0; i < str.length; i++) {
+    crc ^= (str.charCodeAt(i) << 8);
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xFFFF;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+
+function tlvPix(id, value) {
+  const len = String(value.length).padStart(2, '0');
+  return id + len + value;
+}
+
+function gerarPixCopiaCola(opts) {
+  const chave = opts.chave;
+  const nome = (opts.nome || NOME_LOJA).substring(0, 25);
+  const cidade = (opts.cidade || 'BRASIL').substring(0, 15);
+  let txid = (opts.txid || '***').replace(/[^a-zA-Z0-9]/g, '').substring(0, 25);
+  if (!txid) txid = '***';
+
+  const merchantAccountInfo = tlvPix('00', 'BR.GOV.BCB.PIX') + tlvPix('01', chave);
+
+  let payload =
+    tlvPix('00', '01') +
+    tlvPix('01', '11') +
+    tlvPix('26', merchantAccountInfo) +
+    tlvPix('52', '0000') +
+    tlvPix('53', '986');
+
+  if (opts.valor && Number(opts.valor) > 0) {
+    payload += tlvPix('54', Number(opts.valor).toFixed(2));
+  }
+
+  payload += tlvPix('58', 'BR') + tlvPix('59', nome) + tlvPix('60', cidade);
+  payload += tlvPix('62', tlvPix('05', txid));
+  payload += '6304';
+
+  return payload + crc16Pix(payload);
+}
+
+function abrirModalPix(nomeProduto, preco) {
+  if (!PIX_CONFIG || !PIX_CONFIG.chave) return;
+
+  document.getElementById('pix-modal-produto').textContent = nomeProduto;
+  document.getElementById('pix-modal-valor').textContent = 'R$ ' + Number(preco).toFixed(2).replace('.', ',');
+
+  const codigo = gerarPixCopiaCola({
+    chave: PIX_CONFIG.chave,
+    nome: PIX_CONFIG.nomeLoja,
+    cidade: PIX_CONFIG.cidade,
+    valor: preco,
+    txid: '***'
+  });
+
+  document.getElementById('pix-codigo').value = codigo;
+  document.getElementById('pix-copiar-msg').textContent = '';
+
+  const qrEl = document.getElementById('pix-qrcode');
+  qrEl.innerHTML = '';
+  if (window.QRCode) {
+    new QRCode(qrEl, { text: codigo, width: 200, height: 200 });
+  }
+
+  document.getElementById('pix-modal').style.display = 'flex';
+}
+
+function fecharModalPix() {
+  document.getElementById('pix-modal').style.display = 'none';
+}
+
+function copiarCodigoPix() {
+  const campo = document.getElementById('pix-codigo');
+  campo.select();
+  const msgEl = document.getElementById('pix-copiar-msg');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(campo.value).then(function() {
+      msgEl.textContent = 'Código copiado! Cole no app do seu banco.';
+    }).catch(function() {
+      msgEl.textContent = 'Não copiou sozinho — o texto já está selecionado, copie manualmente.';
+    });
+  } else {
+    document.execCommand('copy');
+    msgEl.textContent = 'Código copiado! Cole no app do seu banco.';
+  }
+}
+
+// ===================== Configurações da loja =====================
 
 function aplicarConfiguracoes(config) {
   const whatsapp = (config.whatsapp || WHATSAPP_PADRAO).trim();
@@ -48,8 +145,6 @@ function aplicarConfiguracoes(config) {
     document.getElementById('hero-descricao').textContent = config.heroDescricao;
   }
 
-  // Banner: faixa larga abaixo do cabeçalho. Quando existe, o desenho
-  // do frasco no hero some (pra não ficar repetindo imagem de perfume).
   if (config.bannerUrl) {
     const bannerWrap = document.getElementById('banner-wrap');
     document.getElementById('banner-img').src = config.bannerUrl;
@@ -63,6 +158,14 @@ function aplicarConfiguracoes(config) {
     document.getElementById('video-wrap').innerHTML =
       '<iframe src="https://www.youtube.com/embed/' + videoId + '" title="Vídeo Lord Perfumaria" allowfullscreen loading="lazy"></iframe>';
     document.getElementById('video-section').style.display = 'block';
+  }
+
+  if (config.pixKey) {
+    PIX_CONFIG = {
+      chave: config.pixKey,
+      cidade: config.pixCidade || 'BRASIL',
+      nomeLoja: NOME_LOJA
+    };
   }
 
   return whatsapp;
@@ -89,17 +192,21 @@ function carregarProdutos(whatsapp) {
         ? 'R$ ' + Number(data.preco).toFixed(2).replace('.', ',')
         : '';
 
-      const mensagem = encodeURIComponent('Olá! Tenho interesse no perfume: ' + (data.nome || ''));
+      const partesMsg = ['Olá! Tenho interesse no perfume: ' + (data.nome || '')];
+      if (data.foto) partesMsg.push(data.foto);
+      const mensagem = encodeURIComponent(partesMsg.join('\n'));
       const linkComprar = whatsapp
         ? `https://wa.me/${whatsapp}?text=${mensagem}`
         : '#';
 
-      // Se a foto falhar ao carregar (link quebrado, apagado do ImgBB etc.),
-      // onFotoProdutoErro troca pelo mesmo aviso "Sem foto" — nunca mais fica
-      // um quadro em branco sem explicação.
       const imagemHtml = data.foto
         ? `<img src="${escapeHtml(data.foto)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" onerror="onFotoProdutoErro(this)">`
         : `<div class="produto-img-placeholder">${PLACEHOLDER_ICON}<span>Sem foto</span></div>`;
+
+      const nomeEscapadoJs = (data.nome || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      const btnPix = (PIX_CONFIG && PIX_CONFIG.chave)
+        ? `<button type="button" class="produto-comprar produto-pix-btn" onclick="abrirModalPix('${nomeEscapadoJs}', ${Number(data.preco) || 0})">Pagar com Pix</button>`
+        : '';
 
       const card = document.createElement('article');
       card.className = 'produto-card';
@@ -109,7 +216,10 @@ function carregarProdutos(whatsapp) {
           <h3>${escapeHtml(data.nome || '')}</h3>
           <p>${escapeHtml(data.descricao || '')}</p>
           <div class="produto-preco">${precoFormatado}</div>
-          <a href="${linkComprar}" target="_blank" rel="noopener" class="produto-comprar">Comprar via WhatsApp</a>
+          <div class="produto-acoes">
+            <a href="${linkComprar}" class="produto-comprar">Comprar via WhatsApp</a>
+            ${btnPix}
+          </div>
         </div>
       `;
       container.appendChild(card);
