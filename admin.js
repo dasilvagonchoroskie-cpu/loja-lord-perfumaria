@@ -52,6 +52,23 @@ function fazerLogin() {
   });
 }
 
+function recuperarSenha() {
+  const erroEl = document.getElementById('login-erro');
+  let email = document.getElementById('login-email').value.trim();
+  if (!email) {
+    email = prompt('Digite o e-mail cadastrado do painel:');
+    if (!email) return;
+  }
+  erroEl.textContent = '';
+  auth.sendPasswordResetEmail(email).then(function() {
+    erroEl.style.color = 'var(--success)';
+    erroEl.textContent = 'Enviamos um link pra ' + email + '. Abra o e-mail e siga o link pra criar uma senha nova.';
+  }).catch(function(error) {
+    erroEl.style.color = '';
+    erroEl.textContent = 'Erro (' + error.code + '): ' + error.message;
+  });
+}
+
 function sair() {
   auth.signOut();
 }
