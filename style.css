@@ -93,16 +93,6 @@ h1, h2, h3 {
 }
 .site-nav a:hover, .site-nav a:focus-visible { color: var(--accent); }
 
-/* ---------- Banner (opcional, definido pelo cliente no painel) ---------- */
-.banner-wrap { width: 100%; }
-.banner-img {
-  width: 100%;
-  max-height: 360px;
-  object-fit: cover;
-  display: block;
-  border-bottom: 1px solid var(--border);
-}
-
 /* ---------- Hero ---------- */
 .hero {
   padding: 72px 0 56px;
@@ -143,25 +133,55 @@ h1, h2, h3 {
   justify-content: center;
 }
 .hero-art svg { width: 100%; max-width: 220px; height: auto; }
+.hero-banner-img {
+  width: 100%;
+  max-width: 280px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  aspect-ratio: 4 / 5;
+}
 
 @media (max-width: 720px) {
   .hero .container { grid-template-columns: 1fr; }
-  .hero-art { order: -1; max-width: 140px; margin: 0 auto; }
+  .hero-art { order: -1; max-width: 200px; margin: 0 auto; }
+}
+
+/* ---------- Vídeo institucional (opcional) ---------- */
+.video-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+}
+.video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 /* ---------- Sections ---------- */
-.section { padding: 56px 0; border-top: 1px solid var(--border); }
+.section { padding: 48px 0; border-top: 1px solid var(--border); }
 
 .section h2 {
-  font-size: 30px;
-  margin-bottom: 32px;
+  font-size: 26px;
+  margin-bottom: 28px;
 }
 
-/* ---------- Catálogo ---------- */
+/* ---------- Catálogo (compacto, 2 colunas no celular) ---------- */
 .produtos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 32px 28px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 12px;
+}
+@media (min-width: 560px) {
+  .produtos-grid { grid-template-columns: repeat(3, 1fr); gap: 22px 18px; }
+}
+@media (min-width: 900px) {
+  .produtos-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 .produto-card {
@@ -171,7 +191,7 @@ h1, h2, h3 {
 
 .produto-img, .produto-img-placeholder {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
@@ -182,41 +202,46 @@ h1, h2, h3 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   color: var(--accent-dim);
 }
-.produto-img-placeholder svg { width: 40px; height: 40px; opacity: 0.7; }
-.produto-img-placeholder span { font-size: 12px; color: var(--text-muted); }
+.produto-img-placeholder svg { width: 28px; height: 28px; opacity: 0.7; }
+.produto-img-placeholder span { font-size: 11px; color: var(--text-muted); }
 
-.produto-info { padding-top: 14px; }
+.produto-info { padding-top: 10px; }
 
 .produto-info h3 {
-  font-size: 19px;
-  margin-bottom: 6px;
+  font-size: 15px;
+  margin-bottom: 4px;
+  line-height: 1.3;
 }
 
 .produto-info p {
   color: var(--text-muted);
-  font-size: 14px;
-  margin: 0 0 12px;
+  font-size: 12px;
+  margin: 0 0 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .produto-preco {
   font-family: var(--serif);
   color: var(--accent);
-  font-size: 18px;
-  margin-bottom: 12px;
+  font-size: 15px;
+  margin-bottom: 8px;
 }
 
 .produto-comprar {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   text-decoration: none;
   color: var(--text);
-  font-size: 14px;
+  font-size: 12px;
   border-bottom: 1px solid var(--accent-dim);
-  padding-bottom: 3px;
+  padding-bottom: 2px;
   align-self: flex-start;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
@@ -225,7 +250,7 @@ h1, h2, h3 {
   border-color: var(--accent);
 }
 
-.loading-msg { color: var(--text-muted); font-size: 15px; }
+.loading-msg { color: var(--text-muted); font-size: 15px; grid-column: 1 / -1; }
 
 /* ---------- Footer ---------- */
 .site-footer {
