@@ -93,6 +93,21 @@ h1, h2, h3 {
 }
 .site-nav a:hover, .site-nav a:focus-visible { color: var(--accent); }
 
+/* ---------- Banner (largura total, imagem inteira, sem cortar) ---------- */
+.banner-wrap {
+  width: 100%;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+.banner-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 460px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
 /* ---------- Hero ---------- */
 .hero {
   padding: 72px 0 56px;
@@ -133,17 +148,10 @@ h1, h2, h3 {
   justify-content: center;
 }
 .hero-art svg { width: 100%; max-width: 220px; height: auto; }
-.hero-banner-img {
-  width: 100%;
-  max-width: 280px;
-  border: 1px solid var(--border);
-  object-fit: cover;
-  aspect-ratio: 4 / 5;
-}
 
 @media (max-width: 720px) {
   .hero .container { grid-template-columns: 1fr; }
-  .hero-art { order: -1; max-width: 200px; margin: 0 auto; }
+  .hero-art { order: -1; max-width: 140px; margin: 0 auto; }
 }
 
 /* ---------- Vídeo institucional (opcional) ---------- */
