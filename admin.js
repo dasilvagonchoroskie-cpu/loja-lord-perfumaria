@@ -66,7 +66,7 @@ function trocarSenha() {
   });
 }
 
-// ----- CONFIGURAÇÕES DA LOJA (e-mail, WhatsApp, textos da home, banner) -----
+// ----- CONFIGURAÇÕES DA LOJA (e-mail, WhatsApp, textos da home, banner, vídeo) -----
 const CONFIG_DOC = db.collection('config').doc('site');
 
 function carregarConfiguracoes() {
@@ -76,6 +76,7 @@ function carregarConfiguracoes() {
     document.getElementById('config-whatsapp').value = data.whatsapp || '';
     document.getElementById('config-hero-titulo').value = data.heroTitulo || '';
     document.getElementById('config-hero-descricao').value = data.heroDescricao || '';
+    document.getElementById('config-video-url').value = data.videoUrl || '';
     mostrarPreviewBanner(data.bannerUrl || '');
   }).catch(function(error) {
     console.error('Erro ao carregar configurações:', error);
@@ -85,8 +86,8 @@ function carregarConfiguracoes() {
 function mostrarPreviewBanner(url) {
   const wrap = document.getElementById('banner-preview-wrap');
   wrap.innerHTML = url
-    ? '<img src="' + url + '" style="max-width:100%;display:block;margin-bottom:10px;border:1px solid var(--border);">'
-    : '<p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Nenhum banner definido ainda.</p>';
+    ? '<img src="' + url + '" style="max-width:220px;display:block;margin-bottom:10px;border:1px solid var(--border);">'
+    : '<p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Nenhum banner definido ainda (aparece o desenho do frasco no lugar).</p>';
 }
 
 function salvarConfiguracoes() {
@@ -99,7 +100,8 @@ function salvarConfiguracoes() {
     email: document.getElementById('config-email').value.trim(),
     whatsapp: document.getElementById('config-whatsapp').value.trim().replace(/\D/g, ''),
     heroTitulo: document.getElementById('config-hero-titulo').value.trim(),
-    heroDescricao: document.getElementById('config-hero-descricao').value.trim()
+    heroDescricao: document.getElementById('config-hero-descricao').value.trim(),
+    videoUrl: document.getElementById('config-video-url').value.trim()
   };
 
   function salvar(dadosExtra) {
@@ -128,7 +130,7 @@ function salvarConfiguracoes() {
 }
 
 function removerBanner() {
-  if (!confirm('Remover o banner da página inicial?')) return;
+  if (!confirm('Remover o banner? A página inicial volta a mostrar o desenho do frasco.')) return;
   CONFIG_DOC.get().then(function(doc) {
     const data = doc.exists ? doc.data() : {};
     if (data.bannerDeleteUrl) tentarApagarDoImgBB(data.bannerDeleteUrl);
