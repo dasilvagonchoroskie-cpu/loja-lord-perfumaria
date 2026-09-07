@@ -41,12 +41,11 @@ function aplicarConfiguracoes(config) {
     document.getElementById('hero-descricao').textContent = config.heroDescricao;
   }
 
-  // Banner substitui o desenho do frasco no mesmo lugar (não fica separado)
+  // Banner: faixa larga logo abaixo do cabeçalho, imagem inteira, sem cortar
   if (config.bannerUrl) {
-    document.getElementById('hero-art-svg').style.display = 'none';
-    const bannerImg = document.getElementById('hero-art-banner');
-    bannerImg.src = config.bannerUrl;
-    bannerImg.style.display = 'block';
+    const bannerWrap = document.getElementById('banner-wrap');
+    document.getElementById('banner-img').src = config.bannerUrl;
+    bannerWrap.style.display = 'block';
   }
 
   const videoId = extrairYoutubeId(config.videoUrl);
