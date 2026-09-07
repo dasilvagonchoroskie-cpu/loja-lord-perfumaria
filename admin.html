@@ -103,6 +103,13 @@
         <label>Cidade do Pix (a cidade que aparece no cadastro da chave)</label>
         <input type="text" id="config-pix-cidade" placeholder="Ex: RIO VERDE">
       </div>
+      <div class="admin-field">
+        <label class="checkbox-label">
+          <input type="checkbox" id="config-mostrar-link-admin" checked>
+          Mostrar link da área administrativa no rodapé da loja
+        </label>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Quando marcado, aparece "Acesso restrito — somente administrador" no rodapé da loja (um aviso, não uma trava técnica — quem souber o endereço direto acessa de qualquer forma; a senha continua sendo a proteção real). Desmarque pra esconder completamente.</p>
+      </div>
       <button class="admin-btn" onclick="salvarConfiguracoes()">Salvar configurações</button>
       <p id="config-msg" class="success-msg"></p>
     </div>
