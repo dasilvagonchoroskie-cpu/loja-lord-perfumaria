@@ -86,7 +86,7 @@ function carregarConfiguracoes() {
 function mostrarPreviewBanner(url) {
   const wrap = document.getElementById('banner-preview-wrap');
   wrap.innerHTML = url
-    ? '<img src="' + url + '" style="max-width:220px;display:block;margin-bottom:10px;border:1px solid var(--border);">'
+    ? '<img src="' + url + '" style="max-width:100%;display:block;margin-bottom:10px;border:1px solid var(--border);">'
     : '<p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Nenhum banner definido ainda (aparece o desenho do frasco no lugar).</p>';
 }
 
@@ -164,23 +164,55 @@ function carregarProdutos() {
     snapshot.forEach(function(doc) {
       const data = doc.data();
       const disponivel = data.disponivel !== false;
+      const temFoto = !!data.foto;
       const row = document.createElement('div');
       row.className = 'item-row';
       row.innerHTML = `
         <div class="item-info">
           <strong>${escapeHtml(data.nome || '')} — R$ ${Number(data.preco || 0).toFixed(2).replace('.', ',')}</strong>
           <span>${escapeHtml(data.descricao || '')} ${disponivel ? '' : '(desativado)'}</span>
+          <span style="font-size:11px;">${temFoto ? '📷 tem foto' : '⚠️ sem foto'}</span>
         </div>
         <div class="item-actions">
-          <button class="admin-btn secondary" onclick="editarProduto('${doc.id}')">Editar</button>
+          <button class="admin-btn secondary" onclick="editarProduto('${doc.id}')">Editar texto</button>
           <button class="admin-btn secondary" onclick="alternarDisponibilidade('${doc.id}', ${disponivel})">${disponivel ? 'Desativar' : 'Ativar'}</button>
           <button class="admin-btn danger" onclick="apagarProduto('${doc.id}')">Apagar</button>
+        </div>
+        <div class="item-foto-row">
+          <input type="file" id="foto-produto-${doc.id}" accept="image/*">
+          <button class="admin-btn secondary" onclick="trocarFotoProduto('${doc.id}')">Trocar foto</button>
+          <span id="foto-status-${doc.id}" style="font-size:12px;color:var(--text-muted);"></span>
         </div>
       `;
       container.appendChild(row);
     });
   }).catch(function(error) {
     mostrarAvisoTecnico('ERRO AO LER: [' + error.code + '] ' + error.message, 'erro');
+  });
+}
+
+function trocarFotoProduto(id) {
+  const input = document.getElementById('foto-produto-' + id);
+  const statusEl = document.getElementById('foto-status-' + id);
+  const arquivo = input.files[0];
+  if (!arquivo) { alert('Escolhe uma foto primeiro (botão acima do "Trocar foto").'); return; }
+
+  statusEl.textContent = 'Enviando...';
+  db.collection('produtos').doc(id).get().then(function(doc) {
+    const dataAntiga = doc.data() || {};
+    return uploadImagemImgBB(arquivo).then(function(resultado) {
+      if (dataAntiga.fotoDeleteUrl) tentarApagarDoImgBB(dataAntiga.fotoDeleteUrl);
+      return db.collection('produtos').doc(id).update({
+        foto: resultado.url,
+        fotoDeleteUrl: resultado.deleteUrl
+      });
+    });
+  }).then(function() {
+    statusEl.textContent = 'Foto atualizada!';
+    carregarProdutos();
+  }).catch(function(erro) {
+    statusEl.textContent = '';
+    alert('Erro ao trocar foto: ' + erro);
   });
 }
 
