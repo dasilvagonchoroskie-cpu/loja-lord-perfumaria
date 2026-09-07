@@ -22,8 +22,6 @@
   </div>
 </header>
 
-<div id="banner-wrap" class="banner-wrap" style="display:none"></div>
-
 <main>
   <section class="hero">
     <div class="container">
@@ -32,15 +30,23 @@
         <hr class="hero-rule">
         <p class="hero-desc" id="hero-descricao">Óleos perfumísticos de nicho, concentrados e duradouros — selecionados um a um pela intensidade e pela sofisticação de suas notas.</p>
       </div>
-      <div class="hero-art">
-        <svg viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-dim);">
+      <div class="hero-art" id="hero-art">
+        <svg id="hero-art-svg" viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-dim);">
           <rect x="50" y="10" width="20" height="16" rx="2"/>
           <rect x="56" y="26" width="8" height="14"/>
           <path d="M40 40 L80 40 L88 58 L88 180 Q88 188 80 188 L40 188 Q32 188 32 180 L32 58 Z"/>
           <line x1="32" y1="122" x2="88" y2="122"/>
           <line x1="32" y1="130" x2="88" y2="130"/>
         </svg>
+        <img id="hero-art-banner" class="hero-banner-img" style="display:none" alt="Lord Perfumaria">
       </div>
+    </div>
+  </section>
+
+  <section id="video-section" class="section" style="display:none">
+    <div class="container" style="text-align:center;">
+      <h2>Conheça a Lord</h2>
+      <div class="video-wrap" id="video-wrap"></div>
     </div>
   </section>
 
