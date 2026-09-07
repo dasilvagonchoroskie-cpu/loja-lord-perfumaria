@@ -66,8 +66,23 @@ function trocarSenha() {
   });
 }
 
-// ----- CONFIGURAÇÕES DA LOJA (e-mail, WhatsApp, textos da home, banner, vídeo) -----
+// ----- CONFIGURAÇÕES DA LOJA (e-mail, WhatsApp, textos da home, banner, vídeo, Pix) -----
 const CONFIG_DOC = db.collection('config').doc('site');
+
+// Chave Pix tipo telefone precisa do +55 na hora de gerar o código de
+// pagamento (é assim que o Banco Central exige no QR Code), mesmo que
+// no cadastro do banco a pessoa só tenha digitado o número puro.
+// Aqui a gente aceita como o Evandro digitar e ajusta sozinho.
+function normalizarChavePix(valor) {
+  valor = (valor || '').trim();
+  if (!valor) return '';
+  if (valor.startsWith('+')) return valor;
+  const apenasDigitos = valor.replace(/\D/g, '');
+  if (apenasDigitos === valor && (apenasDigitos.length === 10 || apenasDigitos.length === 11)) {
+    return '+55' + apenasDigitos;
+  }
+  return valor; // e-mail, CPF/CNPJ ou chave aleatória — mantém como digitado
+}
 
 function carregarConfiguracoes() {
   CONFIG_DOC.get().then(function(doc) {
@@ -77,6 +92,8 @@ function carregarConfiguracoes() {
     document.getElementById('config-hero-titulo').value = data.heroTitulo || '';
     document.getElementById('config-hero-descricao').value = data.heroDescricao || '';
     document.getElementById('config-video-url').value = data.videoUrl || '';
+    document.getElementById('config-pix-key').value = data.pixKey || '';
+    document.getElementById('config-pix-cidade').value = data.pixCidade || '';
     mostrarPreviewBanner(data.bannerUrl || '');
   }).catch(function(error) {
     console.error('Erro ao carregar configurações:', error);
@@ -101,7 +118,9 @@ function salvarConfiguracoes() {
     whatsapp: document.getElementById('config-whatsapp').value.trim().replace(/\D/g, ''),
     heroTitulo: document.getElementById('config-hero-titulo').value.trim(),
     heroDescricao: document.getElementById('config-hero-descricao').value.trim(),
-    videoUrl: document.getElementById('config-video-url').value.trim()
+    videoUrl: document.getElementById('config-video-url').value.trim(),
+    pixKey: normalizarChavePix(document.getElementById('config-pix-key').value),
+    pixCidade: document.getElementById('config-pix-cidade').value.trim().toUpperCase()
   };
 
   function salvar(dadosExtra) {
