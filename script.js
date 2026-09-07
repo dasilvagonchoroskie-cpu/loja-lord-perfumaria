@@ -12,6 +12,13 @@ const PLACEHOLDER_ICON = `
   </svg>
 `;
 
+function onFotoProdutoErro(imgEl) {
+  const placeholder = document.createElement('div');
+  placeholder.className = 'produto-img-placeholder';
+  placeholder.innerHTML = PLACEHOLDER_ICON + '<span>Sem foto</span>';
+  imgEl.replaceWith(placeholder);
+}
+
 function extrairYoutubeId(url) {
   if (!url) return null;
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
@@ -41,11 +48,14 @@ function aplicarConfiguracoes(config) {
     document.getElementById('hero-descricao').textContent = config.heroDescricao;
   }
 
-  // Banner: faixa larga logo abaixo do cabeçalho, imagem inteira, sem cortar
+  // Banner: faixa larga abaixo do cabeçalho. Quando existe, o desenho
+  // do frasco no hero some (pra não ficar repetindo imagem de perfume).
   if (config.bannerUrl) {
     const bannerWrap = document.getElementById('banner-wrap');
     document.getElementById('banner-img').src = config.bannerUrl;
     bannerWrap.style.display = 'block';
+    document.getElementById('hero-art').style.display = 'none';
+    document.getElementById('hero-container').classList.add('sem-arte');
   }
 
   const videoId = extrairYoutubeId(config.videoUrl);
@@ -84,8 +94,11 @@ function carregarProdutos(whatsapp) {
         ? `https://wa.me/${whatsapp}?text=${mensagem}`
         : '#';
 
+      // Se a foto falhar ao carregar (link quebrado, apagado do ImgBB etc.),
+      // onFotoProdutoErro troca pelo mesmo aviso "Sem foto" — nunca mais fica
+      // um quadro em branco sem explicação.
       const imagemHtml = data.foto
-        ? `<img src="${escapeHtml(data.foto)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy">`
+        ? `<img src="${escapeHtml(data.foto)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" onerror="onFotoProdutoErro(this)">`
         : `<div class="produto-img-placeholder">${PLACEHOLDER_ICON}<span>Sem foto</span></div>`;
 
       const card = document.createElement('article');
