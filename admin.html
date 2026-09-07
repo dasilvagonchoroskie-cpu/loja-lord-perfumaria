@@ -83,11 +83,16 @@
         <textarea id="config-hero-descricao" placeholder="Óleos perfumísticos de nicho, concentrados e duradouros..."></textarea>
       </div>
       <div class="admin-field">
-        <label>Banner da marca (imagem larga, tipo cartaz — aparece no topo do site)</label>
+        <label>Banner da marca (imagem — substitui o desenho do frasco ao lado do título)</label>
         <div id="banner-preview-wrap"></div>
         <input type="file" id="config-banner-foto" accept="image/*">
         <p id="config-banner-status" style="font-size:12px;color:var(--text-muted);margin-top:6px;"></p>
         <button class="admin-btn secondary" type="button" onclick="removerBanner()" style="margin-top:10px;">Remover banner</button>
+      </div>
+      <div class="admin-field">
+        <label>Link de vídeo do YouTube (opcional — pra vídeo de propaganda/apresentação)</label>
+        <input type="text" id="config-video-url" placeholder="https://www.youtube.com/watch?v=...">
+        <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Suba o vídeo no YouTube (pode deixar como "não listado") e cole o link aqui. Deixe em branco pra não mostrar vídeo nenhum.</p>
       </div>
       <button class="admin-btn" onclick="salvarConfiguracoes()">Salvar configurações</button>
       <p id="config-msg" class="success-msg"></p>
