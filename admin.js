@@ -94,6 +94,7 @@ function carregarConfiguracoes() {
     document.getElementById('config-video-url').value = data.videoUrl || '';
     document.getElementById('config-pix-key').value = data.pixKey || '';
     document.getElementById('config-pix-cidade').value = data.pixCidade || '';
+    document.getElementById('config-mostrar-link-admin').checked = data.linkAdminVisivel !== false;
     mostrarPreviewBanner(data.bannerUrl || '');
   }).catch(function(error) {
     console.error('Erro ao carregar configurações:', error);
@@ -120,7 +121,8 @@ function salvarConfiguracoes() {
     heroDescricao: document.getElementById('config-hero-descricao').value.trim(),
     videoUrl: document.getElementById('config-video-url').value.trim(),
     pixKey: normalizarChavePix(document.getElementById('config-pix-key').value),
-    pixCidade: document.getElementById('config-pix-cidade').value.trim().toUpperCase()
+    pixCidade: document.getElementById('config-pix-cidade').value.trim().toUpperCase(),
+    linkAdminVisivel: document.getElementById('config-mostrar-link-admin').checked
   };
 
   function salvar(dadosExtra) {
