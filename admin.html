@@ -94,6 +94,15 @@
         <input type="text" id="config-video-url" placeholder="https://www.youtube.com/watch?v=...">
         <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Suba o vídeo no YouTube (pode deixar como "não listado") e cole o link aqui. Deixe em branco pra não mostrar vídeo nenhum.</p>
       </div>
+      <div class="admin-field">
+        <label>Chave Pix (o número de telefone que o Juliano cadastrou — pode digitar só os números, ex: 64999999999)</label>
+        <input type="text" id="config-pix-key" placeholder="64999999999">
+        <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Sem essa chave, o botão "Pagar com Pix" não aparece na loja — só o WhatsApp.</p>
+      </div>
+      <div class="admin-field">
+        <label>Cidade do Pix (a cidade que aparece no cadastro da chave)</label>
+        <input type="text" id="config-pix-cidade" placeholder="Ex: RIO VERDE">
+      </div>
       <button class="admin-btn" onclick="salvarConfiguracoes()">Salvar configurações</button>
       <p id="config-msg" class="success-msg"></p>
     </div>
