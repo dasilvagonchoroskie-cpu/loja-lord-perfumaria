@@ -12,6 +12,12 @@ const PLACEHOLDER_ICON = `
   </svg>
 `;
 
+function extrairYoutubeId(url) {
+  if (!url) return null;
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
+
 function aplicarConfiguracoes(config) {
   const whatsapp = (config.whatsapp || WHATSAPP_PADRAO).trim();
   const email = (config.email || EMAIL_PADRAO).trim();
@@ -35,10 +41,19 @@ function aplicarConfiguracoes(config) {
     document.getElementById('hero-descricao').textContent = config.heroDescricao;
   }
 
-  const bannerWrap = document.getElementById('banner-wrap');
-  if (config.bannerUrl && bannerWrap) {
-    bannerWrap.innerHTML = '<img src="' + escapeHtml(config.bannerUrl) + '" alt="Lord Perfumaria" class="banner-img">';
-    bannerWrap.style.display = 'block';
+  // Banner substitui o desenho do frasco no mesmo lugar (não fica separado)
+  if (config.bannerUrl) {
+    document.getElementById('hero-art-svg').style.display = 'none';
+    const bannerImg = document.getElementById('hero-art-banner');
+    bannerImg.src = config.bannerUrl;
+    bannerImg.style.display = 'block';
+  }
+
+  const videoId = extrairYoutubeId(config.videoUrl);
+  if (videoId) {
+    document.getElementById('video-wrap').innerHTML =
+      '<iframe src="https://www.youtube.com/embed/' + videoId + '" title="Vídeo Lord Perfumaria" allowfullscreen loading="lazy"></iframe>';
+    document.getElementById('video-section').style.display = 'block';
   }
 
   return whatsapp;
@@ -71,7 +86,7 @@ function carregarProdutos(whatsapp) {
         : '#';
 
       const imagemHtml = data.foto
-        ? `<img src="${escapeHtml(data.foto)}" alt="${escapeHtml(data.nome || '')}" class="produto-img">`
+        ? `<img src="${escapeHtml(data.foto)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy">`
         : `<div class="produto-img-placeholder">${PLACEHOLDER_ICON}<span>Sem foto</span></div>`;
 
       const card = document.createElement('article');
@@ -109,7 +124,6 @@ db.collection('config').doc('site').get().then(function(doc) {
   const whatsapp = aplicarConfiguracoes(config);
   carregarProdutos(whatsapp);
 }).catch(function() {
-  // Se der erro ao ler configurações (ex: regras ainda não atualizadas), usa os padrões e segue normalmente
   const whatsapp = aplicarConfiguracoes({});
   carregarProdutos(whatsapp);
 });
