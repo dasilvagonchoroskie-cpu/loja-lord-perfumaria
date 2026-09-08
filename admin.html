@@ -99,20 +99,44 @@
 
       <div class="admin-box">
         <h2>Aparência da loja</h2>
-        <p style="font-size:13px; color: var(--text-muted); margin-bottom: 18px;">Muda as cores da loja sem depender de ninguém programar de novo.</p>
+        <p style="font-size:0.8125rem; color: var(--text-muted); margin-bottom: 18px;">Temas prontos — todos já testados pra letra ficar legível no fundo escolhido, sem risco de ficar apagado.</p>
         <div class="admin-field">
-          <label>Cor de fundo</label>
-          <input type="color" id="config-cor-fundo" value="#14100D">
+          <label>Tema de cores</label>
+          <div class="tema-swatches" id="tema-swatches">
+            <button type="button" class="tema-swatch ativo" data-tema="escuro-dourado" onclick="escolherTema('escuro-dourado')">
+              <span class="tema-preview" style="background:#14100D;"><span style="background:#EDE6D8"></span><span style="background:#C9A24B"></span></span>
+              Escuro Dourado
+            </button>
+            <button type="button" class="tema-swatch" data-tema="claro-elegante" onclick="escolherTema('claro-elegante')">
+              <span class="tema-preview" style="background:#F5F0E6;"><span style="background:#241C13"></span><span style="background:#8A6F3A"></span></span>
+              Claro Elegante
+            </button>
+            <button type="button" class="tema-swatch" data-tema="azul-petroleo" onclick="escolherTema('azul-petroleo')">
+              <span class="tema-preview" style="background:#0D1B1E;"><span style="background:#E8F1F0"></span><span style="background:#4FA8A0"></span></span>
+              Azul Petróleo
+            </button>
+            <button type="button" class="tema-swatch" data-tema="verde-esmeralda" onclick="escolherTema('verde-esmeralda')">
+              <span class="tema-preview" style="background:#0F1B14;"><span style="background:#E9F2EA"></span><span style="background:#5FA87A"></span></span>
+              Verde Esmeralda
+            </button>
+            <button type="button" class="tema-swatch" data-tema="grafite" onclick="escolherTema('grafite')">
+              <span class="tema-preview" style="background:#17181A;"><span style="background:#F0F0EF"></span><span style="background:#C9A24B"></span></span>
+              Grafite
+            </button>
+            <button type="button" class="tema-swatch" data-tema="dourado-intenso" onclick="escolherTema('dourado-intenso')">
+              <span class="tema-preview" style="background:#1C1206;"><span style="background:#F5E6C8"></span><span style="background:#E0B563"></span></span>
+              Dourado Intenso
+            </button>
+          </div>
         </div>
         <div class="admin-field">
-          <label>Cor do texto</label>
-          <input type="color" id="config-cor-texto" value="#EDE6D8">
+          <label>Tamanho do texto</label>
+          <div class="fonte-opcoes" id="fonte-opcoes">
+            <button type="button" class="fonte-opcao" data-fonte="0.9" onclick="escolherFonte('0.9')">Pequeno</button>
+            <button type="button" class="fonte-opcao ativo" data-fonte="1" onclick="escolherFonte('1')">Médio</button>
+            <button type="button" class="fonte-opcao" data-fonte="1.15" onclick="escolherFonte('1.15')">Grande</button>
+          </div>
         </div>
-        <div class="admin-field">
-          <label>Cor de destaque (títulos, preços, detalhes)</label>
-          <input type="color" id="config-cor-destaque" value="#C9A24B">
-        </div>
-        <button class="admin-btn secondary" type="button" onclick="restaurarCoresPadrao()">Restaurar cores padrão</button>
       </div>
 
       <div class="admin-box">
