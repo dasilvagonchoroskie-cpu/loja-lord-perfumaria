@@ -5,7 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lord Perfumaria — Perfumaria de Nicho Árabe</title>
 <meta name="description" content="Perfumes de nicho árabe selecionados. Fragrâncias marcantes e duradouras.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#14100D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lord">
 <link rel="stylesheet" href="style.css">
+<script>
+(function() {
+  try {
+    var c = localStorage.getItem('lordperfumaria_config_cache');
+    if (!c) return;
+    var config = JSON.parse(c);
+    var TEMAS = {
+      'escuro-dourado':   { bg: '#14100D', texto: '#EDE6D8', destaque: '#C9A24B' },
+      'claro-elegante':   { bg: '#F5F0E6', texto: '#241C13', destaque: '#8A6F3A' },
+      'azul-petroleo':    { bg: '#0D1B1E', texto: '#E8F1F0', destaque: '#4FA8A0' },
+      'verde-esmeralda':  { bg: '#0F1B14', texto: '#E9F2EA', destaque: '#5FA87A' },
+      'grafite':          { bg: '#17181A', texto: '#F0F0EF', destaque: '#C9A24B' },
+      'dourado-intenso':  { bg: '#1C1206', texto: '#F5E6C8', destaque: '#E0B563' }
+    };
+    function ajustarCor(hex, quantidade) {
+      hex = hex.replace('#', '');
+      if (hex.length === 3) hex = hex.split('').map(function(ch) { return ch + ch; }).join('');
+      var num = parseInt(hex, 16);
+      var r = (num >> 16) + quantidade;
+      var g = ((num >> 8) & 0x00FF) + quantidade;
+      var b = (num & 0x0000FF) + quantidade;
+      r = Math.max(0, Math.min(255, r));
+      g = Math.max(0, Math.min(255, g));
+      b = Math.max(0, Math.min(255, b));
+      return '#' + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1).toUpperCase();
+    }
+    var tema = TEMAS[config.tema] || TEMAS['escuro-dourado'];
+    var raiz = document.documentElement.style;
+    raiz.setProperty('--bg', tema.bg);
+    raiz.setProperty('--bg-elevated', ajustarCor(tema.bg, 18));
+    raiz.setProperty('--bg-elevated-2', ajustarCor(tema.bg, 28));
+    raiz.setProperty('--border', ajustarCor(tema.bg, 45));
+    raiz.setProperty('--danger-bg', ajustarCor(tema.bg, 15));
+    raiz.setProperty('--success-bg', ajustarCor(tema.bg, 15));
+    raiz.setProperty('--text', tema.texto);
+    raiz.setProperty('--text-muted', ajustarCor(tema.texto, -60));
+    raiz.setProperty('--accent', tema.destaque);
+    raiz.setProperty('--accent-dim', ajustarCor(tema.destaque, -50));
+    raiz.setProperty('--escala-fonte', config.escalaFonte || '1');
+    if (config.bannerUrl) {
+      raiz.setProperty('--banner-cache-url', 'url(' + JSON.stringify(config.bannerUrl) + ')');
+      document.documentElement.setAttribute('data-banner-cache', '1');
+    }
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 
