@@ -41,90 +41,138 @@
 
   <div id="painel" style="display:none">
 
-    <div class="admin-box">
-      <h2>Produtos</h2>
-      <div id="lista-produtos"></div>
-      <hr style="border-color: var(--border); margin: 20px 0;">
-      <p style="font-size:13px; color: var(--text-muted); margin-bottom: 14px;">Adicionar novo perfume</p>
-      <div class="admin-field">
-        <label>Nome do perfume</label>
-        <input type="text" id="novo-produto-nome">
+    <div id="painel-produtos" class="admin-aba">
+      <div class="admin-box">
+        <h2>Produtos</h2>
+        <div id="lista-produtos"></div>
+        <hr style="border-color: var(--border); margin: 20px 0;">
+        <p style="font-size:13px; color: var(--text-muted); margin-bottom: 14px;">Adicionar novo perfume</p>
+        <div class="admin-field">
+          <label>Nome do perfume</label>
+          <input type="text" id="novo-produto-nome">
+        </div>
+        <div class="admin-field">
+          <label>Descrição (notas, ocasião, etc.)</label>
+          <textarea id="novo-produto-descricao"></textarea>
+        </div>
+        <div class="admin-field">
+          <label>Preço (só números, ex: 189.90)</label>
+          <input type="text" id="novo-produto-preco" placeholder="0.00">
+        </div>
+        <div class="admin-field">
+          <label>Foto do perfume</label>
+          <input type="file" id="novo-produto-foto" accept="image/*">
+          <p id="novo-produto-foto-status" style="font-size:12px;color:var(--text-muted);margin-top:6px;"></p>
+        </div>
+        <button class="admin-btn" onclick="adicionarProduto()">Adicionar produto</button>
       </div>
-      <div class="admin-field">
-        <label>Descrição (notas, ocasião, etc.)</label>
-        <textarea id="novo-produto-descricao"></textarea>
-      </div>
-      <div class="admin-field">
-        <label>Preço (só números, ex: 189.90)</label>
-        <input type="text" id="novo-produto-preco" placeholder="0.00">
-      </div>
-      <div class="admin-field">
-        <label>Foto do perfume</label>
-        <input type="file" id="novo-produto-foto" accept="image/*">
-        <p id="novo-produto-foto-status" style="font-size:12px;color:var(--text-muted);margin-top:6px;"></p>
-      </div>
-      <button class="admin-btn" onclick="adicionarProduto()">Adicionar produto</button>
     </div>
 
-    <div class="admin-box">
-      <h2>Configurações da loja</h2>
-      <p style="font-size:13px; color: var(--text-muted); margin-bottom: 18px;">Essas informações aparecem na página inicial da loja. Deixe em branco pra manter o padrão.</p>
-      <div class="admin-field">
-        <label>E-mail de contato</label>
-        <input type="email" id="config-email" placeholder="lordperfumaria1@gmail.com">
+    <div id="painel-loja" class="admin-aba" style="display:none">
+      <div class="admin-box">
+        <h2>Contato e textos</h2>
+        <p style="font-size:13px; color: var(--text-muted); margin-bottom: 18px;">Essas informações aparecem na página inicial da loja. Deixe em branco pra manter o padrão.</p>
+        <div class="admin-field">
+          <label>E-mail de contato</label>
+          <input type="email" id="config-email" placeholder="lordperfumaria1@gmail.com">
+        </div>
+        <div class="admin-field">
+          <label>WhatsApp (com DDD e código do país, só números — ex: 5564999999999)</label>
+          <input type="text" id="config-whatsapp" placeholder="5564999999999">
+        </div>
+        <div class="admin-field">
+          <label>Frase de destaque (título grande da página inicial)</label>
+          <input type="text" id="config-hero-titulo" placeholder="Fragrâncias que permanecem na lembrança">
+        </div>
+        <div class="admin-field">
+          <label>Texto de apoio (abaixo do título)</label>
+          <textarea id="config-hero-descricao" placeholder="Óleos perfumísticos de nicho, concentrados e duradouros..."></textarea>
+        </div>
+        <div class="admin-field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="config-mostrar-link-admin" checked>
+            Mostrar link da área administrativa no rodapé da loja
+          </label>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Aparece "Acesso restrito — somente administrador" no rodapé (é um aviso, não uma trava — a senha continua sendo a proteção real). Desmarque pra esconder completamente.</p>
+        </div>
       </div>
-      <div class="admin-field">
-        <label>WhatsApp (com DDD e código do país, só números — ex: 5564999999999)</label>
-        <input type="text" id="config-whatsapp" placeholder="5564999999999">
+
+      <div class="admin-box">
+        <h2>Aparência da loja</h2>
+        <p style="font-size:13px; color: var(--text-muted); margin-bottom: 18px;">Muda as cores da loja sem depender de ninguém programar de novo.</p>
+        <div class="admin-field">
+          <label>Cor de fundo</label>
+          <input type="color" id="config-cor-fundo" value="#14100D">
+        </div>
+        <div class="admin-field">
+          <label>Cor do texto</label>
+          <input type="color" id="config-cor-texto" value="#EDE6D8">
+        </div>
+        <div class="admin-field">
+          <label>Cor de destaque (títulos, preços, detalhes)</label>
+          <input type="color" id="config-cor-destaque" value="#C9A24B">
+        </div>
+        <button class="admin-btn secondary" type="button" onclick="restaurarCoresPadrao()">Restaurar cores padrão</button>
       </div>
-      <div class="admin-field">
-        <label>Frase de destaque (título grande da página inicial)</label>
-        <input type="text" id="config-hero-titulo" placeholder="Fragrâncias que permanecem na lembrança">
+
+      <div class="admin-box">
+        <h2>Banner e vídeo</h2>
+        <div class="admin-field">
+          <label>Banner da marca (imagem larga tipo cartaz — some o desenho do frasco quando tiver um banner)</label>
+          <div id="banner-preview-wrap"></div>
+          <input type="file" id="config-banner-foto" accept="image/*">
+          <p id="config-banner-status" style="font-size:12px;color:var(--text-muted);margin-top:6px;"></p>
+          <button class="admin-btn secondary" type="button" onclick="removerBanner()" style="margin-top:10px;">Remover banner</button>
+        </div>
+        <div class="admin-field">
+          <label>Link de vídeo do YouTube (opcional — pra vídeo de propaganda/apresentação)</label>
+          <input type="text" id="config-video-url" placeholder="https://www.youtube.com/watch?v=...">
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Suba o vídeo no YouTube (pode deixar como "não listado") e cole o link aqui. Deixe em branco pra não mostrar vídeo nenhum.</p>
+        </div>
       </div>
-      <div class="admin-field">
-        <label>Texto de apoio (abaixo do título)</label>
-        <textarea id="config-hero-descricao" placeholder="Óleos perfumísticos de nicho, concentrados e duradouros..."></textarea>
+
+      <div class="admin-box">
+        <h2>Pagamento via Pix</h2>
+        <div class="admin-field">
+          <label>Chave Pix (o número de telefone que o Juliano cadastrou — pode digitar só os números, ex: 64999999999)</label>
+          <input type="text" id="config-pix-key" placeholder="64999999999">
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Sem essa chave, o botão "Pagar com Pix" não aparece na loja — só o WhatsApp.</p>
+        </div>
+        <div class="admin-field">
+          <label>Cidade do Pix (a cidade que aparece no cadastro da chave)</label>
+          <input type="text" id="config-pix-cidade" placeholder="Ex: RIO VERDE">
+        </div>
       </div>
-      <div class="admin-field">
-        <label>Banner da marca (imagem larga tipo cartaz — some o desenho do frasco quando tiver um banner)</label>
-        <div id="banner-preview-wrap"></div>
-        <input type="file" id="config-banner-foto" accept="image/*">
-        <p id="config-banner-status" style="font-size:12px;color:var(--text-muted);margin-top:6px;"></p>
-        <button class="admin-btn secondary" type="button" onclick="removerBanner()" style="margin-top:10px;">Remover banner</button>
-      </div>
-      <div class="admin-field">
-        <label>Link de vídeo do YouTube (opcional — pra vídeo de propaganda/apresentação)</label>
-        <input type="text" id="config-video-url" placeholder="https://www.youtube.com/watch?v=...">
-        <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Suba o vídeo no YouTube (pode deixar como "não listado") e cole o link aqui. Deixe em branco pra não mostrar vídeo nenhum.</p>
-      </div>
-      <div class="admin-field">
-        <label>Chave Pix (o número de telefone que o Juliano cadastrou — pode digitar só os números, ex: 64999999999)</label>
-        <input type="text" id="config-pix-key" placeholder="64999999999">
-        <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Sem essa chave, o botão "Pagar com Pix" não aparece na loja — só o WhatsApp.</p>
-      </div>
-      <div class="admin-field">
-        <label>Cidade do Pix (a cidade que aparece no cadastro da chave)</label>
-        <input type="text" id="config-pix-cidade" placeholder="Ex: RIO VERDE">
-      </div>
-      <div class="admin-field">
-        <label class="checkbox-label">
-          <input type="checkbox" id="config-mostrar-link-admin" checked>
-          Mostrar link da área administrativa no rodapé da loja
-        </label>
-        <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Quando marcado, aparece "Acesso restrito — somente administrador" no rodapé da loja (um aviso, não uma trava técnica — quem souber o endereço direto acessa de qualquer forma; a senha continua sendo a proteção real). Desmarque pra esconder completamente.</p>
-      </div>
+
       <button class="admin-btn" onclick="salvarConfiguracoes()">Salvar configurações</button>
       <p id="config-msg" class="success-msg"></p>
     </div>
 
-    <div class="admin-box">
-      <h2>Sua conta</h2>
-      <button class="admin-btn secondary" onclick="trocarSenha()">Trocar minha senha</button>
-      <button class="admin-btn secondary" onclick="sair()">Sair</button>
-      <p id="senha-msg" class="success-msg"></p>
+    <div id="painel-conta" class="admin-aba" style="display:none">
+      <div class="admin-box">
+        <h2>Sua conta</h2>
+        <button class="admin-btn secondary" onclick="trocarSenha()">Trocar minha senha</button>
+        <button class="admin-btn secondary" onclick="sair()">Sair</button>
+        <p id="senha-msg" class="success-msg"></p>
+      </div>
     </div>
 
   </div>
+
+  <nav id="admin-tabs" class="admin-tabs" style="display:none">
+    <button type="button" class="admin-tab ativo" data-aba="produtos" onclick="mostrarAba('produtos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 3l9 9-8 8-9-9V3z"/><circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+      Produtos
+    </button>
+    <button type="button" class="admin-tab" data-aba="loja" onclick="mostrarAba('loja')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="6" x2="19" y2="6"/><circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/><line x1="5" y1="12" x2="19" y2="12"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/><line x1="5" y1="18" x2="19" y2="18"/><circle cx="11" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+      Loja
+    </button>
+    <button type="button" class="admin-tab" data-aba="conta" onclick="mostrarAba('conta')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+      Conta
+    </button>
+  </nav>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
