@@ -385,11 +385,45 @@ h1, h2, h3 {
 .admin-wrap {
   max-width: 640px;
   margin: 0 auto;
-  padding: 48px 24px 80px;
+  padding: 48px 24px 110px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
+
+.admin-aba {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-tabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  z-index: 60;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.admin-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--sans);
+  font-size: 11px;
+  cursor: pointer;
+}
+.admin-tab svg { width: 22px; height: 22px; }
+.admin-tab.ativo { color: var(--accent); }
 
 .admin-box {
   background: var(--bg-elevated);
