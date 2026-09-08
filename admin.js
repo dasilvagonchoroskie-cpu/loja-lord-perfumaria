@@ -67,6 +67,23 @@ function escolherFonte(valor) {
   aplicarEscalaFonte(valor);
 }
 
+// Aplica IMEDIATAMENTE o tema salvo em cache local, antes mesmo do
+// login ou da busca no Firestore terminarem — evita a "piscada" do
+// visual padrão. Mesma chave de cache usada em script.js (loja
+// pública), então trocar entre painel e loja fica instantâneo depois
+// da primeira vez que qualquer uma das duas páginas carregar.
+const CACHE_CONFIG_CHAVE = 'lordperfumaria_config_cache';
+try {
+  const configEmCache = localStorage.getItem(CACHE_CONFIG_CHAVE);
+  if (configEmCache) {
+    const dataCache = JSON.parse(configEmCache);
+    temaSelecionado = dataCache.tema || TEMA_PADRAO;
+    fonteSelecionada = dataCache.escalaFonte || '1';
+    aplicarTema(temaSelecionado);
+    aplicarEscalaFonte(fonteSelecionada);
+  }
+} catch (e) { /* sem cache ou cache invalido — segue com o padrão */ }
+
 function uploadImagemImgBB(arquivo) {
   return new Promise(function(resolve, reject) {
     if (!arquivo) { reject('Nenhum arquivo selecionado.'); return; }
@@ -202,6 +219,7 @@ function carregarConfiguracoes() {
     aplicarTema(temaSelecionado);
     aplicarEscalaFonte(fonteSelecionada);
     mostrarPreviewBanner(data.bannerUrl || '');
+    try { localStorage.setItem(CACHE_CONFIG_CHAVE, JSON.stringify(data)); } catch (e) {}
   }).catch(function(error) {
     console.error('Erro ao carregar configurações:', error);
   });
