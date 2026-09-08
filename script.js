@@ -5,6 +5,17 @@ const WHATSAPP_PADRAO = '5564992221728';
 const EMAIL_PADRAO = 'lordperfumaria1@gmail.com';
 const NOME_LOJA = 'LORD PERFUMARIA';
 
+// Temas prontos — mesma lista de admin.js, contraste já conferido
+const TEMAS = {
+  'escuro-dourado':   { bg: '#14100D', texto: '#EDE6D8', destaque: '#C9A24B' },
+  'claro-elegante':   { bg: '#F5F0E6', texto: '#241C13', destaque: '#8A6F3A' },
+  'azul-petroleo':    { bg: '#0D1B1E', texto: '#E8F1F0', destaque: '#4FA8A0' },
+  'verde-esmeralda':  { bg: '#0F1B14', texto: '#E9F2EA', destaque: '#5FA87A' },
+  'grafite':          { bg: '#17181A', texto: '#F0F0EF', destaque: '#C9A24B' },
+  'dourado-intenso':  { bg: '#1C1206', texto: '#F5E6C8', destaque: '#E0B563' }
+};
+const TEMA_PADRAO = 'escuro-dourado';
+
 let PIX_CONFIG = null; // definido em aplicarConfiguracoes() se houver chave Pix cadastrada
 
 const PLACEHOLDER_ICON = `
@@ -189,26 +200,26 @@ function aplicarConfiguracoes(config) {
     document.getElementById('admin-link-wrap').style.display = 'block';
   }
 
-  // Cores personalizadas (se o Juliano configurou). O resto da paleta
-  // (fundo dos cartões, bordas, tons esmaecidos) é derivado automaticamente
-  // dessas 3 cores, pra loja continuar com visual coerente em qualquer combinação.
+  // Tema de cores: paletas prontas (contraste já conferido), em vez de
+  // cores soltas escolhidas livremente. O resto da paleta (fundo dos
+  // cartões, bordas, tons esmaecidos) é derivado automaticamente das 3
+  // cores do tema, pra manter tudo coerente.
   const raiz = document.documentElement.style;
-  if (config.corFundo) {
-    raiz.setProperty('--bg', config.corFundo);
-    raiz.setProperty('--bg-elevated', ajustarCor(config.corFundo, 18));
-    raiz.setProperty('--bg-elevated-2', ajustarCor(config.corFundo, 28));
-    raiz.setProperty('--border', ajustarCor(config.corFundo, 45));
-    raiz.setProperty('--danger-bg', ajustarCor(config.corFundo, 15));
-    raiz.setProperty('--success-bg', ajustarCor(config.corFundo, 15));
-  }
-  if (config.corTexto) {
-    raiz.setProperty('--text', config.corTexto);
-    raiz.setProperty('--text-muted', ajustarCor(config.corTexto, -60));
-  }
-  if (config.corDestaque) {
-    raiz.setProperty('--accent', config.corDestaque);
-    raiz.setProperty('--accent-dim', ajustarCor(config.corDestaque, -50));
-  }
+  const tema = TEMAS[config.tema] || TEMAS[TEMA_PADRAO];
+  raiz.setProperty('--bg', tema.bg);
+  raiz.setProperty('--bg-elevated', ajustarCor(tema.bg, 18));
+  raiz.setProperty('--bg-elevated-2', ajustarCor(tema.bg, 28));
+  raiz.setProperty('--border', ajustarCor(tema.bg, 45));
+  raiz.setProperty('--danger-bg', ajustarCor(tema.bg, 15));
+  raiz.setProperty('--success-bg', ajustarCor(tema.bg, 15));
+  raiz.setProperty('--text', tema.texto);
+  raiz.setProperty('--text-muted', ajustarCor(tema.texto, -60));
+  raiz.setProperty('--accent', tema.destaque);
+  raiz.setProperty('--accent-dim', ajustarCor(tema.destaque, -50));
+
+  // Tamanho do texto (afeta a página inteira, já que todo font-size do
+  // site é em rem, relativo ao tamanho base definido aqui)
+  raiz.setProperty('--escala-fonte', config.escalaFonte || '1');
 
   return whatsapp;
 }
