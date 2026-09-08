@@ -16,11 +16,47 @@ const TEMA_PADRAO = 'escuro-dourado';
 let temaSelecionado = TEMA_PADRAO;
 let fonteSelecionada = '1';
 
+// Clareia (quantidade positiva) ou escurece (negativa) uma cor hex —
+// mesma função de script.js, usada aqui pra pré-visualizar o tema
+// dentro do próprio painel, não só na loja.
+function ajustarCor(hex, quantidade) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(function(c) { return c + c; }).join('');
+  const num = parseInt(hex, 16);
+  let r = (num >> 16) + quantidade;
+  let g = ((num >> 8) & 0x00FF) + quantidade;
+  let b = (num & 0x0000FF) + quantidade;
+  r = Math.max(0, Math.min(255, r));
+  g = Math.max(0, Math.min(255, g));
+  b = Math.max(0, Math.min(255, b));
+  return '#' + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1).toUpperCase();
+}
+
+function aplicarTema(nome) {
+  const tema = TEMAS[nome] || TEMAS[TEMA_PADRAO];
+  const raiz = document.documentElement.style;
+  raiz.setProperty('--bg', tema.bg);
+  raiz.setProperty('--bg-elevated', ajustarCor(tema.bg, 18));
+  raiz.setProperty('--bg-elevated-2', ajustarCor(tema.bg, 28));
+  raiz.setProperty('--border', ajustarCor(tema.bg, 45));
+  raiz.setProperty('--danger-bg', ajustarCor(tema.bg, 15));
+  raiz.setProperty('--success-bg', ajustarCor(tema.bg, 15));
+  raiz.setProperty('--text', tema.texto);
+  raiz.setProperty('--text-muted', ajustarCor(tema.texto, -60));
+  raiz.setProperty('--accent', tema.destaque);
+  raiz.setProperty('--accent-dim', ajustarCor(tema.destaque, -50));
+}
+
+function aplicarEscalaFonte(valor) {
+  document.documentElement.style.setProperty('--escala-fonte', valor);
+}
+
 function escolherTema(nome) {
   temaSelecionado = nome;
   document.querySelectorAll('.tema-swatch').forEach(function(btn) {
     btn.classList.toggle('ativo', btn.dataset.tema === nome);
   });
+  aplicarTema(nome); // já muda o visual do próprio painel na hora, sem precisar salvar
 }
 
 function escolherFonte(valor) {
@@ -28,6 +64,7 @@ function escolherFonte(valor) {
   document.querySelectorAll('.fonte-opcao').forEach(function(btn) {
     btn.classList.toggle('ativo', btn.dataset.fonte === valor);
   });
+  aplicarEscalaFonte(valor);
 }
 
 function uploadImagemImgBB(arquivo) {
@@ -162,6 +199,8 @@ function carregarConfiguracoes() {
     document.querySelectorAll('.fonte-opcao').forEach(function(btn) {
       btn.classList.toggle('ativo', btn.dataset.fonte === fonteSelecionada);
     });
+    aplicarTema(temaSelecionado);
+    aplicarEscalaFonte(fonteSelecionada);
     mostrarPreviewBanner(data.bannerUrl || '');
   }).catch(function(error) {
     console.error('Erro ao carregar configurações:', error);
