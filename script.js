@@ -22,6 +22,23 @@ function onFotoProdutoErro(imgEl) {
   imgEl.replaceWith(placeholder);
 }
 
+// Clareia (quantidade positiva) ou escurece (quantidade negativa) uma cor hex.
+// Usado pra gerar sozinho as variações (fundo dos cartões, bordas, tons
+// esmaecidos) a partir das 3 cores que o Juliano escolhe, mantendo a paleta
+// inteira coerente em vez de só trocar 3 cores soltas.
+function ajustarCor(hex, quantidade) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(function(c) { return c + c; }).join('');
+  const num = parseInt(hex, 16);
+  let r = (num >> 16) + quantidade;
+  let g = ((num >> 8) & 0x00FF) + quantidade;
+  let b = (num & 0x0000FF) + quantidade;
+  r = Math.max(0, Math.min(255, r));
+  g = Math.max(0, Math.min(255, g));
+  b = Math.max(0, Math.min(255, b));
+  return '#' + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1).toUpperCase();
+}
+
 function extrairYoutubeId(url) {
   if (!url) return null;
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
@@ -170,6 +187,27 @@ function aplicarConfiguracoes(config) {
 
   if (config.linkAdminVisivel !== false) {
     document.getElementById('admin-link-wrap').style.display = 'block';
+  }
+
+  // Cores personalizadas (se o Juliano configurou). O resto da paleta
+  // (fundo dos cartões, bordas, tons esmaecidos) é derivado automaticamente
+  // dessas 3 cores, pra loja continuar com visual coerente em qualquer combinação.
+  const raiz = document.documentElement.style;
+  if (config.corFundo) {
+    raiz.setProperty('--bg', config.corFundo);
+    raiz.setProperty('--bg-elevated', ajustarCor(config.corFundo, 18));
+    raiz.setProperty('--bg-elevated-2', ajustarCor(config.corFundo, 28));
+    raiz.setProperty('--border', ajustarCor(config.corFundo, 45));
+    raiz.setProperty('--danger-bg', ajustarCor(config.corFundo, 15));
+    raiz.setProperty('--success-bg', ajustarCor(config.corFundo, 15));
+  }
+  if (config.corTexto) {
+    raiz.setProperty('--text', config.corTexto);
+    raiz.setProperty('--text-muted', ajustarCor(config.corTexto, -60));
+  }
+  if (config.corDestaque) {
+    raiz.setProperty('--accent', config.corDestaque);
+    raiz.setProperty('--accent-dim', ajustarCor(config.corDestaque, -50));
   }
 
   return whatsapp;
