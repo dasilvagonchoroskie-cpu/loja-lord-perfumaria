@@ -293,10 +293,21 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// Carrega configurações da loja primeiro (com fallback seguro), depois os produtos
+// Aplica IMEDIATAMENTE o que estiver salvo localmente (evita a
+// "piscada" do visual padrão antes da configuração real do Firestore
+// chegar — some depois da primeira vez que a página carrega em cada
+// aparelho, já que passa a ter algo salvo aqui pra usar na hora).
+const CACHE_CONFIG_CHAVE = 'lordperfumaria_config_cache';
+try {
+  const configEmCache = localStorage.getItem(CACHE_CONFIG_CHAVE);
+  if (configEmCache) aplicarConfiguracoes(JSON.parse(configEmCache));
+} catch (e) { /* sem cache ou cache invalido — segue normal */ }
+
+// Carrega configurações da loja de verdade (com fallback seguro), depois os produtos
 db.collection('config').doc('site').get().then(function(doc) {
   const config = doc.exists ? doc.data() : {};
   const whatsapp = aplicarConfiguracoes(config);
+  try { localStorage.setItem(CACHE_CONFIG_CHAVE, JSON.stringify(config)); } catch (e) {}
   carregarProdutos(whatsapp);
 }).catch(function() {
   const whatsapp = aplicarConfiguracoes({});
