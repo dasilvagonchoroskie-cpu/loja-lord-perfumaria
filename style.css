@@ -112,6 +112,20 @@ h1, h2, h3 {
   margin: 0 auto;
 }
 
+/* Assim que o script no <head> marca que existe um banner em cache,
+   mostra a imagem na hora via CSS puro (sem esperar nenhum JS depois
+   do <body> rodar) e já esconde o frasco decorativo — fecha a
+   "piscada" também pro banner, não só pras cores. */
+html[data-banner-cache="1"] #banner-wrap {
+  display: block;
+  min-height: 160px;
+  background-image: var(--banner-cache-url);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+html[data-banner-cache="1"] #hero-art { display: none; }
+
 /* ---------- Hero ---------- */
 .hero {
   padding: 72px 0 56px;
