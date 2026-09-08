@@ -1,10 +1,34 @@
 // ===== CONFIGURAÇÃO DO IMGBB (upload automático de fotos) =====
 const IMGBB_API_KEY = 'c5f5341bea7eb7169bd38071a172a59f';
 
-// Cores padrão do design original (usadas se o Juliano nunca mexer, e pelo botão "Restaurar")
-const COR_FUNDO_PADRAO = '#14100D';
-const COR_TEXTO_PADRAO = '#EDE6D8';
-const COR_DESTAQUE_PADRAO = '#C9A24B';
+// Temas prontos — contraste já conferido, pra letra nunca ficar apagada
+// (a mesma lista existe em script.js pra aplicar na loja pública)
+const TEMAS = {
+  'escuro-dourado':   { bg: '#14100D', texto: '#EDE6D8', destaque: '#C9A24B' },
+  'claro-elegante':   { bg: '#F5F0E6', texto: '#241C13', destaque: '#8A6F3A' },
+  'azul-petroleo':    { bg: '#0D1B1E', texto: '#E8F1F0', destaque: '#4FA8A0' },
+  'verde-esmeralda':  { bg: '#0F1B14', texto: '#E9F2EA', destaque: '#5FA87A' },
+  'grafite':          { bg: '#17181A', texto: '#F0F0EF', destaque: '#C9A24B' },
+  'dourado-intenso':  { bg: '#1C1206', texto: '#F5E6C8', destaque: '#E0B563' }
+};
+const TEMA_PADRAO = 'escuro-dourado';
+
+let temaSelecionado = TEMA_PADRAO;
+let fonteSelecionada = '1';
+
+function escolherTema(nome) {
+  temaSelecionado = nome;
+  document.querySelectorAll('.tema-swatch').forEach(function(btn) {
+    btn.classList.toggle('ativo', btn.dataset.tema === nome);
+  });
+}
+
+function escolherFonte(valor) {
+  fonteSelecionada = valor;
+  document.querySelectorAll('.fonte-opcao').forEach(function(btn) {
+    btn.classList.toggle('ativo', btn.dataset.fonte === valor);
+  });
+}
 
 function uploadImagemImgBB(arquivo) {
   return new Promise(function(resolve, reject) {
@@ -130,9 +154,14 @@ function carregarConfiguracoes() {
     document.getElementById('config-pix-key').value = data.pixKey || '';
     document.getElementById('config-pix-cidade').value = data.pixCidade || '';
     document.getElementById('config-mostrar-link-admin').checked = data.linkAdminVisivel !== false;
-    document.getElementById('config-cor-fundo').value = data.corFundo || COR_FUNDO_PADRAO;
-    document.getElementById('config-cor-texto').value = data.corTexto || COR_TEXTO_PADRAO;
-    document.getElementById('config-cor-destaque').value = data.corDestaque || COR_DESTAQUE_PADRAO;
+    temaSelecionado = data.tema || TEMA_PADRAO;
+    fonteSelecionada = data.escalaFonte || '1';
+    document.querySelectorAll('.tema-swatch').forEach(function(btn) {
+      btn.classList.toggle('ativo', btn.dataset.tema === temaSelecionado);
+    });
+    document.querySelectorAll('.fonte-opcao').forEach(function(btn) {
+      btn.classList.toggle('ativo', btn.dataset.fonte === fonteSelecionada);
+    });
     mostrarPreviewBanner(data.bannerUrl || '');
   }).catch(function(error) {
     console.error('Erro ao carregar configurações:', error);
@@ -161,9 +190,8 @@ function salvarConfiguracoes() {
     pixKey: normalizarChavePix(document.getElementById('config-pix-key').value),
     pixCidade: document.getElementById('config-pix-cidade').value.trim().toUpperCase(),
     linkAdminVisivel: document.getElementById('config-mostrar-link-admin').checked,
-    corFundo: document.getElementById('config-cor-fundo').value,
-    corTexto: document.getElementById('config-cor-texto').value,
-    corDestaque: document.getElementById('config-cor-destaque').value
+    tema: temaSelecionado,
+    escalaFonte: fonteSelecionada
   };
 
   function salvar(dadosExtra) {
@@ -189,13 +217,6 @@ function salvarConfiguracoes() {
   } else {
     salvar();
   }
-}
-
-function restaurarCoresPadrao() {
-  document.getElementById('config-cor-fundo').value = COR_FUNDO_PADRAO;
-  document.getElementById('config-cor-texto').value = COR_TEXTO_PADRAO;
-  document.getElementById('config-cor-destaque').value = COR_DESTAQUE_PADRAO;
-  document.getElementById('config-msg').textContent = 'Cores padrão selecionadas — clique em "Salvar configurações" pra aplicar.';
 }
 
 function removerBanner() {
