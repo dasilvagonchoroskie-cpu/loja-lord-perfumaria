@@ -1,6 +1,11 @@
 // ===== CONFIGURAÇÃO DO IMGBB (upload automático de fotos) =====
 const IMGBB_API_KEY = 'c5f5341bea7eb7169bd38071a172a59f';
 
+// Cores padrão do design original (usadas se o Juliano nunca mexer, e pelo botão "Restaurar")
+const COR_FUNDO_PADRAO = '#14100D';
+const COR_TEXTO_PADRAO = '#EDE6D8';
+const COR_DESTAQUE_PADRAO = '#C9A24B';
+
 function uploadImagemImgBB(arquivo) {
   return new Promise(function(resolve, reject) {
     if (!arquivo) { reject('Nenhum arquivo selecionado.'); return; }
@@ -32,13 +37,26 @@ auth.onAuthStateChanged(function(user) {
   if (user) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('painel').style.display = 'block';
+    document.getElementById('admin-tabs').style.display = 'flex';
+    mostrarAba('produtos');
     carregarProdutos();
     carregarConfiguracoes();
   } else {
     document.getElementById('login-screen').style.display = 'block';
     document.getElementById('painel').style.display = 'none';
+    document.getElementById('admin-tabs').style.display = 'none';
   }
 });
+
+function mostrarAba(nome) {
+  ['produtos', 'loja', 'conta'].forEach(function(aba) {
+    document.getElementById('painel-' + aba).style.display = (aba === nome) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.admin-tab').forEach(function(btn) {
+    btn.classList.toggle('ativo', btn.dataset.aba === nome);
+  });
+  window.scrollTo(0, 0);
+}
 
 function fazerLogin() {
   const email = document.getElementById('login-email').value.trim();
@@ -112,6 +130,9 @@ function carregarConfiguracoes() {
     document.getElementById('config-pix-key').value = data.pixKey || '';
     document.getElementById('config-pix-cidade').value = data.pixCidade || '';
     document.getElementById('config-mostrar-link-admin').checked = data.linkAdminVisivel !== false;
+    document.getElementById('config-cor-fundo').value = data.corFundo || COR_FUNDO_PADRAO;
+    document.getElementById('config-cor-texto').value = data.corTexto || COR_TEXTO_PADRAO;
+    document.getElementById('config-cor-destaque').value = data.corDestaque || COR_DESTAQUE_PADRAO;
     mostrarPreviewBanner(data.bannerUrl || '');
   }).catch(function(error) {
     console.error('Erro ao carregar configurações:', error);
@@ -139,7 +160,10 @@ function salvarConfiguracoes() {
     videoUrl: document.getElementById('config-video-url').value.trim(),
     pixKey: normalizarChavePix(document.getElementById('config-pix-key').value),
     pixCidade: document.getElementById('config-pix-cidade').value.trim().toUpperCase(),
-    linkAdminVisivel: document.getElementById('config-mostrar-link-admin').checked
+    linkAdminVisivel: document.getElementById('config-mostrar-link-admin').checked,
+    corFundo: document.getElementById('config-cor-fundo').value,
+    corTexto: document.getElementById('config-cor-texto').value,
+    corDestaque: document.getElementById('config-cor-destaque').value
   };
 
   function salvar(dadosExtra) {
@@ -165,6 +189,13 @@ function salvarConfiguracoes() {
   } else {
     salvar();
   }
+}
+
+function restaurarCoresPadrao() {
+  document.getElementById('config-cor-fundo').value = COR_FUNDO_PADRAO;
+  document.getElementById('config-cor-texto').value = COR_TEXTO_PADRAO;
+  document.getElementById('config-cor-destaque').value = COR_DESTAQUE_PADRAO;
+  document.getElementById('config-msg').textContent = 'Cores padrão selecionadas — clique em "Salvar configurações" pra aplicar.';
 }
 
 function removerBanner() {
