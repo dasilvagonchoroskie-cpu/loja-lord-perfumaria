@@ -20,11 +20,15 @@
   --success-bg: #182119;
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --escala-fonte: 1;
 }
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  font-size: calc(16px * var(--escala-fonte));
+}
 
 body {
   margin: 0;
@@ -71,7 +75,7 @@ h1, h2, h3 {
 
 .brand-name {
   font-family: var(--serif);
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--accent);
@@ -79,7 +83,7 @@ h1, h2, h3 {
 }
 
 .brand-tag {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   margin: 2px 0 0;
 }
@@ -87,7 +91,7 @@ h1, h2, h3 {
 .site-nav a {
   text-decoration: none;
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: 0.9375rem;
   margin-left: 28px;
   transition: color 0.2s ease;
 }
@@ -128,7 +132,7 @@ h1, h2, h3 {
 .hero .container.sem-arte h1 { max-width: none; }
 
 .hero h1 {
-  font-size: clamp(34px, 5vw, 52px);
+  font-size: clamp(2.125rem, 5vw, 3.25rem);
   line-height: 1.15;
   max-width: 13ch;
 }
@@ -146,7 +150,7 @@ h1, h2, h3 {
 
 .hero-desc {
   color: var(--text-muted);
-  font-size: 17px;
+  font-size: 1.0625rem;
   max-width: 44ch;
   margin: 0;
 }
@@ -183,7 +187,7 @@ h1, h2, h3 {
 .section { padding: 48px 0; border-top: 1px solid var(--border); }
 
 .section h2 {
-  font-size: 26px;
+  font-size: 1.625rem;
   margin-bottom: 28px;
 }
 
@@ -222,19 +226,19 @@ h1, h2, h3 {
   color: var(--accent-dim);
 }
 .produto-img-placeholder svg { width: 28px; height: 28px; opacity: 0.7; }
-.produto-img-placeholder span { font-size: 11px; color: var(--text-muted); }
+.produto-img-placeholder span { font-size: 0.6875rem; color: var(--text-muted); }
 
 .produto-info { padding-top: 10px; }
 
 .produto-info h3 {
-  font-size: 15px;
+  font-size: 0.9375rem;
   margin-bottom: 4px;
   line-height: 1.3;
 }
 
 .produto-info p {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 0.75rem;
   margin: 0 0 8px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -245,7 +249,7 @@ h1, h2, h3 {
 .produto-preco {
   font-family: var(--serif);
   color: var(--accent);
-  font-size: 15px;
+  font-size: 0.9375rem;
   margin-bottom: 8px;
 }
 
@@ -264,7 +268,7 @@ h1, h2, h3 {
   background: none;
   color: var(--text);
   font-family: var(--sans);
-  font-size: 12px;
+  font-size: 0.75rem;
   border: none;
   border-bottom: 1px solid var(--accent-dim);
   padding: 0 0 2px;
@@ -277,14 +281,14 @@ h1, h2, h3 {
   border-color: var(--accent);
 }
 
-.loading-msg { color: var(--text-muted); font-size: 15px; grid-column: 1 / -1; }
+.loading-msg { color: var(--text-muted); font-size: 0.9375rem; grid-column: 1 / -1; }
 
 /* ---------- Footer ---------- */
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 28px 0 40px;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .site-footer .container {
   display: flex;
@@ -342,7 +346,7 @@ h1, h2, h3 {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 26px;
+  font-size: 1.625rem;
   cursor: pointer;
   line-height: 1;
 }
@@ -350,7 +354,7 @@ h1, h2, h3 {
 .pix-modal-valor {
   font-family: var(--serif);
   color: var(--accent);
-  font-size: 22px;
+  font-size: 1.375rem;
   margin: 8px 0 18px;
 }
 #pix-qrcode {
@@ -363,7 +367,7 @@ h1, h2, h3 {
 }
 .pix-modal-label {
   display: block;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-bottom: 6px;
   text-align: left;
@@ -374,7 +378,7 @@ h1, h2, h3 {
   border: 1px solid var(--border);
   color: var(--text);
   padding: 10px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-family: monospace;
   min-height: 70px;
   resize: none;
@@ -419,7 +423,7 @@ h1, h2, h3 {
   border: none;
   color: var(--text-muted);
   font-family: var(--sans);
-  font-size: 11px;
+  font-size: 0.6875rem;
   cursor: pointer;
 }
 .admin-tab svg { width: 22px; height: 22px; }
@@ -432,7 +436,7 @@ h1, h2, h3 {
 }
 
 .admin-box h2 {
-  font-size: 22px;
+  font-size: 1.375rem;
   margin-bottom: 20px;
 }
 
@@ -440,7 +444,7 @@ h1, h2, h3 {
 
 .admin-field label {
   display: block;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
@@ -449,7 +453,7 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   color: var(--text);
 }
 .admin-field label.checkbox-label input[type="checkbox"] {
@@ -459,6 +463,62 @@ h1, h2, h3 {
   flex-shrink: 0;
 }
 
+/* ---------- Seletor de tema (paletas prontas, contraste já conferido) ---------- */
+.tema-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.tema-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  padding: 10px 6px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  border-radius: 2px;
+}
+.tema-swatch.ativo { border-color: var(--accent); color: var(--accent); }
+.tema-preview {
+  width: 100%;
+  height: 34px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  padding-bottom: 5px;
+  border-radius: 1px;
+}
+.tema-preview span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ---------- Seletor de tamanho de texto ---------- */
+.fonte-opcoes {
+  display: flex;
+  gap: 10px;
+}
+.fonte-opcao {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 10px 6px;
+  cursor: pointer;
+  font-family: var(--sans);
+  border-radius: 2px;
+}
+.fonte-opcao.ativo { border-color: var(--accent); color: var(--accent); }
+
 .admin-field input,
 .admin-field textarea {
   width: 100%;
@@ -467,7 +527,7 @@ h1, h2, h3 {
   color: var(--text);
   padding: 12px 14px;
   font-family: var(--sans);
-  font-size: 15px;
+  font-size: 0.9375rem;
   border-radius: 2px;
 }
 .admin-field input:focus,
@@ -485,7 +545,7 @@ h1, h2, h3 {
   padding: 12px 22px;
   font-family: var(--sans);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   border-radius: 2px;
   transition: background 0.2s ease;
@@ -511,14 +571,14 @@ h1, h2, h3 {
 
 .error-msg {
   color: var(--danger);
-  font-size: 13px;
+  font-size: 0.8125rem;
   margin-top: 14px;
   line-height: 1.5;
 }
 
 .success-msg {
   color: var(--success);
-  font-size: 13px;
+  font-size: 0.8125rem;
   margin-top: 10px;
 }
 
@@ -532,11 +592,11 @@ h1, h2, h3 {
 .item-row:last-child { border-bottom: none; }
 
 .item-info { display: flex; flex-direction: column; gap: 4px; }
-.item-info strong { font-family: var(--serif); font-weight: 500; font-size: 16px; }
-.item-info span { font-size: 13px; color: var(--text-muted); }
+.item-info strong { font-family: var(--serif); font-weight: 500; font-size: 1rem; }
+.item-info span { font-size: 0.8125rem; color: var(--text-muted); }
 
 .item-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.item-actions .admin-btn { padding: 8px 14px; font-size: 13px; }
+.item-actions .admin-btn { padding: 8px 14px; font-size: 0.8125rem; }
 
 .item-foto-row {
   display: flex;
@@ -547,13 +607,13 @@ h1, h2, h3 {
   border-top: 1px dashed var(--border);
 }
 .item-foto-row input[type="file"] {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text-muted);
   max-width: 160px;
 }
-.item-foto-row .admin-btn { padding: 8px 14px; font-size: 13px; margin: 0; }
+.item-foto-row .admin-btn { padding: 8px 14px; font-size: 0.8125rem; margin: 0; }
 
 #aviso-tecnico {
   font-family: 'SF Mono', Consolas, monospace;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
