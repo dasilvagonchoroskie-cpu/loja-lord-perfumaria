@@ -17,6 +17,8 @@ const TEMAS = {
 const TEMA_PADRAO = 'escuro-dourado';
 
 let PIX_CONFIG = null; // definido em aplicarConfiguracoes() se houver chave Pix cadastrada
+let WHATSAPP_ATUAL = WHATSAPP_PADRAO; // usado pelo checkout do carrinho
+let CLIENTE_ATUAL = null; // definido pelo listener de login do cliente, lá embaixo
 
 const PLACEHOLDER_ICON = `
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -34,9 +36,6 @@ function onFotoProdutoErro(imgEl) {
 }
 
 // Clareia (quantidade positiva) ou escurece (quantidade negativa) uma cor hex.
-// Usado pra gerar sozinho as variações (fundo dos cartões, bordas, tons
-// esmaecidos) a partir das 3 cores que o Juliano escolhe, mantendo a paleta
-// inteira coerente em vez de só trocar 3 cores soltas.
 function ajustarCor(hex, quantidade) {
   hex = hex.replace('#', '');
   if (hex.length === 3) hex = hex.split('').map(function(c) { return c + c; }).join('');
@@ -54,6 +53,12 @@ function extrairYoutubeId(url) {
   if (!url) return null;
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
   return match ? match[1] : null;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 // ===================== PIX (BR Code / EMV QR estático, padrão Banco Central) =====================
@@ -148,11 +153,245 @@ function copiarCodigoPix() {
   }
 }
 
+// ===================== CARRINHO (guardado no navegador, não precisa de login) =====================
+
+const CARRINHO_CHAVE = 'lordperfumaria_carrinho';
+
+function obterCarrinho() {
+  try {
+    return JSON.parse(localStorage.getItem(CARRINHO_CHAVE) || '[]');
+  } catch (e) { return []; }
+}
+
+function salvarCarrinhoLocal(itens) {
+  try { localStorage.setItem(CARRINHO_CHAVE, JSON.stringify(itens)); } catch (e) {}
+  atualizarBadgeCarrinho();
+}
+
+function atualizarBadgeCarrinho() {
+  const itens = obterCarrinho();
+  const total = itens.reduce(function(soma, item) { return soma + item.quantidade; }, 0);
+  const badge = document.getElementById('carrinho-contador');
+  if (total > 0) {
+    badge.textContent = total;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function adicionarAoCarrinho(id, nome, preco, foto) {
+  const itens = obterCarrinho();
+  const existente = itens.find(function(i) { return i.id === id; });
+  if (existente) {
+    existente.quantidade += 1;
+  } else {
+    itens.push({ id: id, nome: nome, preco: Number(preco) || 0, foto: foto || '', quantidade: 1 });
+  }
+  salvarCarrinhoLocal(itens);
+}
+
+function alterarQuantidadeCarrinho(id, delta) {
+  let itens = obterCarrinho();
+  const item = itens.find(function(i) { return i.id === id; });
+  if (!item) return;
+  item.quantidade += delta;
+  if (item.quantidade <= 0) {
+    itens = itens.filter(function(i) { return i.id !== id; });
+  }
+  salvarCarrinhoLocal(itens);
+  renderizarCarrinho();
+}
+
+function removerDoCarrinho(id) {
+  const itens = obterCarrinho().filter(function(i) { return i.id !== id; });
+  salvarCarrinhoLocal(itens);
+  renderizarCarrinho();
+}
+
+function calcularTotalCarrinho(itens) {
+  return itens.reduce(function(soma, item) { return soma + (item.preco * item.quantidade); }, 0);
+}
+
+function renderizarCarrinho() {
+  const itens = obterCarrinho();
+  const container = document.getElementById('carrinho-itens');
+  const totalEl = document.getElementById('carrinho-total');
+  const btnPix = document.getElementById('carrinho-pix-btn');
+  const btnWhats = document.getElementById('carrinho-whatsapp-btn');
+
+  if (!itens.length) {
+    container.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio.</p>';
+    totalEl.textContent = '';
+    btnWhats.href = '#';
+    btnPix.style.display = 'none';
+    return;
+  }
+
+  btnPix.style.display = (PIX_CONFIG && PIX_CONFIG.chave) ? 'block' : 'none';
+
+  container.innerHTML = itens.map(function(item) {
+    const fotoHtml = item.foto
+      ? `<img src="${escapeHtml(item.foto)}" alt="">`
+      : `<div class="carrinho-item-sem-foto">Sem foto</div>`;
+    return `
+      <div class="carrinho-item">
+        ${fotoHtml}
+        <div class="carrinho-item-info">
+          <strong>${escapeHtml(item.nome)}</strong>
+          <div class="carrinho-item-qtd">
+            <button type="button" onclick="alterarQuantidadeCarrinho('${item.id}', -1)" aria-label="Diminuir">−</button>
+            <span>${item.quantidade}</span>
+            <button type="button" onclick="alterarQuantidadeCarrinho('${item.id}', 1)" aria-label="Aumentar">+</button>
+          </div>
+        </div>
+        <span class="carrinho-item-preco">R$ ${(item.preco * item.quantidade).toFixed(2).replace('.', ',')}</span>
+        <button type="button" class="carrinho-item-remover" onclick="removerDoCarrinho('${item.id}')" aria-label="Remover">×</button>
+      </div>
+    `;
+  }).join('');
+
+  const total = calcularTotalCarrinho(itens);
+  totalEl.textContent = 'Total: R$ ' + total.toFixed(2).replace('.', ',');
+
+  const linhasMsg = itens.map(function(item) {
+    return item.quantidade + 'x ' + item.nome + ' (R$ ' + (item.preco * item.quantidade).toFixed(2).replace('.', ',') + ')';
+  });
+  let textoMsg = 'Olá! Quero fazer um pedido:\n' + linhasMsg.join('\n') + '\nTotal: R$ ' + total.toFixed(2).replace('.', ',');
+  if (CLIENTE_ATUAL && CLIENTE_ATUAL.nome) {
+    textoMsg = 'Meu nome: ' + CLIENTE_ATUAL.nome + '\n' + textoMsg;
+  }
+  btnWhats.href = WHATSAPP_ATUAL
+    ? 'https://wa.me/' + WHATSAPP_ATUAL + '?text=' + encodeURIComponent(textoMsg)
+    : '#';
+}
+
+function abrirCarrinho() {
+  renderizarCarrinho();
+  document.getElementById('carrinho-modal').style.display = 'flex';
+}
+
+function fecharCarrinho() {
+  document.getElementById('carrinho-modal').style.display = 'none';
+}
+
+function finalizarCarrinhoComPix() {
+  const itens = obterCarrinho();
+  if (!itens.length) return;
+  const total = calcularTotalCarrinho(itens);
+  fecharCarrinho();
+  abrirModalPix('Pedido (' + itens.length + ' ' + (itens.length === 1 ? 'item' : 'itens') + ')', total);
+}
+
+// ===================== CONTA DO CLIENTE (cadastro/login próprios, separados do admin) =====================
+
+function mostrarAbaConta(nome) {
+  document.getElementById('conta-aba-entrar').style.display = nome === 'entrar' ? 'block' : 'none';
+  document.getElementById('conta-aba-cadastrar').style.display = nome === 'cadastrar' ? 'block' : 'none';
+  document.querySelectorAll('.conta-tab').forEach(function(btn) {
+    btn.classList.toggle('ativo', btn.dataset.abaConta === nome);
+  });
+  document.getElementById('conta-erro').textContent = '';
+}
+
+function abrirModalConta() {
+  document.getElementById('conta-modal').style.display = 'flex';
+}
+
+function fecharModalConta() {
+  document.getElementById('conta-modal').style.display = 'none';
+}
+
+function loginCliente() {
+  const email = document.getElementById('conta-login-email').value.trim();
+  const senha = document.getElementById('conta-login-senha').value;
+  const erroEl = document.getElementById('conta-erro');
+  erroEl.style.color = '';
+  erroEl.textContent = '';
+  auth.signInWithEmailAndPassword(email, senha).catch(function(error) {
+    erroEl.textContent = 'Erro (' + error.code + '): ' + error.message;
+  });
+}
+
+function recuperarSenhaCliente() {
+  const erroEl = document.getElementById('conta-erro');
+  let email = document.getElementById('conta-login-email').value.trim();
+  if (!email) {
+    email = prompt('Digite seu e-mail cadastrado:');
+    if (!email) return;
+  }
+  erroEl.textContent = '';
+  auth.sendPasswordResetEmail(email).then(function() {
+    erroEl.style.color = 'var(--success)';
+    erroEl.textContent = 'Enviamos um link pra ' + email + '. Confira seu e-mail.';
+  }).catch(function(error) {
+    erroEl.style.color = '';
+    erroEl.textContent = 'Erro (' + error.code + '): ' + error.message;
+  });
+}
+
+function cadastrarCliente() {
+  const nome = document.getElementById('conta-cad-nome').value.trim();
+  const email = document.getElementById('conta-cad-email').value.trim();
+  const whatsapp = document.getElementById('conta-cad-whatsapp').value.trim().replace(/\D/g, '');
+  const senha = document.getElementById('conta-cad-senha').value;
+  const erroEl = document.getElementById('conta-erro');
+  erroEl.style.color = '';
+  erroEl.textContent = '';
+
+  if (!nome || !email || !senha) { erroEl.textContent = 'Preencha nome, e-mail e senha.'; return; }
+
+  auth.createUserWithEmailAndPassword(email, senha).then(function(cred) {
+    return db.collection('clientes').doc(cred.user.uid).set({ nome: nome, email: email, whatsapp: whatsapp });
+  }).catch(function(error) {
+    erroEl.textContent = 'Erro (' + error.code + '): ' + error.message;
+  });
+}
+
+function sairCliente() {
+  auth.signOut();
+}
+
+function salvarPerfilCliente() {
+  if (!auth.currentUser) return;
+  const nome = document.getElementById('perfil-nome').value.trim();
+  const whatsapp = document.getElementById('perfil-whatsapp').value.trim().replace(/\D/g, '');
+  const msgEl = document.getElementById('perfil-msg');
+  db.collection('clientes').doc(auth.currentUser.uid).set({ nome: nome, whatsapp: whatsapp }, { merge: true }).then(function() {
+    CLIENTE_ATUAL = Object.assign({}, CLIENTE_ATUAL, { nome: nome, whatsapp: whatsapp });
+    msgEl.textContent = 'Salvo!';
+    setTimeout(function() { msgEl.textContent = ''; }, 2500);
+  }).catch(function(error) {
+    alert('Erro ao salvar: ' + error.message);
+  });
+}
+
+auth.onAuthStateChanged(function(user) {
+  const visitante = document.getElementById('conta-visitante');
+  const logado = document.getElementById('conta-logado');
+  if (user) {
+    db.collection('clientes').doc(user.uid).get().then(function(doc) {
+      const data = doc.exists ? doc.data() : {};
+      CLIENTE_ATUAL = { uid: user.uid, nome: data.nome || '', whatsapp: data.whatsapp || '', email: user.email };
+      document.getElementById('perfil-nome').value = CLIENTE_ATUAL.nome;
+      document.getElementById('perfil-whatsapp').value = CLIENTE_ATUAL.whatsapp;
+      visitante.style.display = 'none';
+      logado.style.display = 'block';
+    });
+  } else {
+    CLIENTE_ATUAL = null;
+    visitante.style.display = 'block';
+    logado.style.display = 'none';
+    mostrarAbaConta('entrar');
+  }
+});
+
 // ===================== Configurações da loja =====================
 
 function aplicarConfiguracoes(config) {
   const whatsapp = (config.whatsapp || WHATSAPP_PADRAO).trim();
   const email = (config.email || EMAIL_PADRAO).trim();
+  WHATSAPP_ATUAL = whatsapp;
 
   if (whatsapp) {
     const btn = document.getElementById('whatsapp-btn');
@@ -200,10 +439,6 @@ function aplicarConfiguracoes(config) {
     document.getElementById('admin-link-wrap').style.display = 'block';
   }
 
-  // Tema de cores: paletas prontas (contraste já conferido), em vez de
-  // cores soltas escolhidas livremente. O resto da paleta (fundo dos
-  // cartões, bordas, tons esmaecidos) é derivado automaticamente das 3
-  // cores do tema, pra manter tudo coerente.
   const raiz = document.documentElement.style;
   const tema = TEMAS[config.tema] || TEMAS[TEMA_PADRAO];
   raiz.setProperty('--bg', tema.bg);
@@ -216,9 +451,6 @@ function aplicarConfiguracoes(config) {
   raiz.setProperty('--text-muted', ajustarCor(tema.texto, -60));
   raiz.setProperty('--accent', tema.destaque);
   raiz.setProperty('--accent-dim', ajustarCor(tema.destaque, -50));
-
-  // Tamanho do texto (afeta a página inteira, já que todo font-size do
-  // site é em rem, relativo ao tamanho base definido aqui)
   raiz.setProperty('--escala-fonte', config.escalaFonte || '1');
 
   return whatsapp;
@@ -257,9 +489,13 @@ function carregarProdutos(whatsapp) {
         : `<div class="produto-img-placeholder">${PLACEHOLDER_ICON}<span>Sem foto</span></div>`;
 
       const nomeEscapadoJs = (data.nome || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      const fotoEscapadaJs = (data.foto || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
       const btnPix = (PIX_CONFIG && PIX_CONFIG.chave)
         ? `<button type="button" class="produto-comprar produto-pix-btn" onclick="abrirModalPix('${nomeEscapadoJs}', ${Number(data.preco) || 0})">Pagar com Pix</button>`
         : '';
+
+      const btnCarrinho = `<button type="button" class="produto-comprar produto-carrinho-btn" onclick="adicionarAoCarrinho('${doc.id}', '${nomeEscapadoJs}', ${Number(data.preco) || 0}, '${fotoEscapadaJs}')">+ Carrinho</button>`;
 
       const card = document.createElement('article');
       card.className = 'produto-card';
@@ -272,6 +508,7 @@ function carregarProdutos(whatsapp) {
           <div class="produto-acoes">
             <a href="${linkComprar}" class="produto-comprar">Comprar via WhatsApp</a>
             ${btnPix}
+            ${btnCarrinho}
           </div>
         </div>
       `;
@@ -287,21 +524,15 @@ function carregarProdutos(whatsapp) {
   });
 }
 
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
 // Aplica IMEDIATAMENTE o que estiver salvo localmente (evita a
 // "piscada" do visual padrão antes da configuração real do Firestore
-// chegar — some depois da primeira vez que a página carrega em cada
-// aparelho, já que passa a ter algo salvo aqui pra usar na hora).
+// chegar), e atualiza o contador do carrinho assim que a página abre.
 const CACHE_CONFIG_CHAVE = 'lordperfumaria_config_cache';
 try {
   const configEmCache = localStorage.getItem(CACHE_CONFIG_CHAVE);
   if (configEmCache) aplicarConfiguracoes(JSON.parse(configEmCache));
 } catch (e) { /* sem cache ou cache invalido — segue normal */ }
+atualizarBadgeCarrinho();
 
 // Carrega configurações da loja de verdade (com fallback seguro), depois os produtos
 db.collection('config').doc('site').get().then(function(doc) {
