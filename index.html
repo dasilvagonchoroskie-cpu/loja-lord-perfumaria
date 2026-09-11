@@ -71,6 +71,15 @@
     <nav class="site-nav">
       <a href="#catalogo">Catálogo</a>
       <a href="#contato">Contato</a>
+      <span class="nav-icons">
+        <button type="button" class="nav-icon-btn" onclick="abrirModalConta()" aria-label="Minha conta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </button>
+        <button type="button" class="nav-icon-btn" onclick="abrirCarrinho()" aria-label="Carrinho">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M1 1h4l2.6 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+          <span id="carrinho-contador" class="carrinho-badge">0</span>
+        </button>
+      </span>
     </nav>
   </div>
 </header>
@@ -144,6 +153,83 @@
     <textarea id="pix-codigo" class="pix-codigo-texto" readonly></textarea>
     <button class="admin-btn" onclick="copiarCodigoPix()" type="button">Copiar código</button>
     <p id="pix-copiar-msg" class="success-msg"></p>
+  </div>
+</div>
+
+<div id="carrinho-modal" class="pix-modal" style="display:none">
+  <div class="pix-modal-inner">
+    <button class="pix-modal-close" onclick="fecharCarrinho()" aria-label="Fechar" type="button">×</button>
+    <h3>Seu carrinho</h3>
+    <div id="carrinho-itens"></div>
+    <div id="carrinho-total" class="carrinho-total"></div>
+    <a id="carrinho-whatsapp-btn" href="#" class="admin-btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px;">Finalizar no WhatsApp</a>
+    <button id="carrinho-pix-btn" class="admin-btn secondary" type="button" onclick="finalizarCarrinhoComPix()" style="display:none;width:100%;">Pagar com Pix</button>
+  </div>
+</div>
+
+<div id="conta-modal" class="pix-modal" style="display:none">
+  <div class="pix-modal-inner">
+    <button class="pix-modal-close" onclick="fecharModalConta()" aria-label="Fechar" type="button">×</button>
+
+    <div id="conta-visitante">
+      <h3>Minha conta</h3>
+      <div class="conta-tabs">
+        <button type="button" class="conta-tab ativo" data-aba-conta="entrar" onclick="mostrarAbaConta('entrar')">Entrar</button>
+        <button type="button" class="conta-tab" data-aba-conta="cadastrar" onclick="mostrarAbaConta('cadastrar')">Cadastrar</button>
+      </div>
+
+      <div id="conta-aba-entrar">
+        <div class="admin-field">
+          <label>E-mail</label>
+          <input type="email" id="conta-login-email">
+        </div>
+        <div class="admin-field">
+          <label>Senha</label>
+          <input type="password" id="conta-login-senha">
+        </div>
+        <button class="admin-btn" type="button" onclick="loginCliente()" style="width:100%;">Entrar</button>
+        <p style="margin-top:12px;text-align:center;">
+          <a href="#" onclick="recuperarSenhaCliente(); return false;" style="color:var(--text-muted); font-size:0.8125rem; text-decoration:underline;">Esqueci minha senha</a>
+        </p>
+      </div>
+
+      <div id="conta-aba-cadastrar" style="display:none">
+        <div class="admin-field">
+          <label>Nome</label>
+          <input type="text" id="conta-cad-nome">
+        </div>
+        <div class="admin-field">
+          <label>E-mail</label>
+          <input type="email" id="conta-cad-email">
+        </div>
+        <div class="admin-field">
+          <label>WhatsApp</label>
+          <input type="text" id="conta-cad-whatsapp" placeholder="5564999999999">
+        </div>
+        <div class="admin-field">
+          <label>Senha (mínimo 6 caracteres)</label>
+          <input type="password" id="conta-cad-senha">
+        </div>
+        <button class="admin-btn" type="button" onclick="cadastrarCliente()" style="width:100%;">Criar conta</button>
+      </div>
+
+      <p id="conta-erro" class="error-msg"></p>
+    </div>
+
+    <div id="conta-logado" style="display:none">
+      <h3>Minha conta</h3>
+      <div class="admin-field">
+        <label>Nome</label>
+        <input type="text" id="perfil-nome">
+      </div>
+      <div class="admin-field">
+        <label>WhatsApp</label>
+        <input type="text" id="perfil-whatsapp" placeholder="5564999999999">
+      </div>
+      <button class="admin-btn" type="button" onclick="salvarPerfilCliente()" style="width:100%;">Salvar</button>
+      <button class="admin-btn secondary" type="button" onclick="sairCliente()" style="width:100%;margin-top:8px;">Sair</button>
+      <p id="perfil-msg" class="success-msg"></p>
+    </div>
   </div>
 </div>
 
