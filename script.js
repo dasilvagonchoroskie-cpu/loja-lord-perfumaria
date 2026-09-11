@@ -532,15 +532,25 @@ try {
   const configEmCache = localStorage.getItem(CACHE_CONFIG_CHAVE);
   if (configEmCache) aplicarConfiguracoes(JSON.parse(configEmCache));
 } catch (e) { /* sem cache ou cache invalido — segue normal */ }
-atualizarBadgeCarrinho();
+
+try {
+  atualizarBadgeCarrinho();
+} catch (e) {
+  document.getElementById('produtos-lista').innerHTML = '<p class="loading-msg">Erro técnico (carrinho): ' + e.message + '</p>';
+}
 
 // Carrega configurações da loja de verdade (com fallback seguro), depois os produtos
 db.collection('config').doc('site').get().then(function(doc) {
   const config = doc.exists ? doc.data() : {};
-  const whatsapp = aplicarConfiguracoes(config);
+  let whatsapp;
+  try {
+    whatsapp = aplicarConfiguracoes(config);
+  } catch (e) {
+    document.getElementById('produtos-lista').innerHTML = '<p class="loading-msg">Erro técnico (configurações): ' + e.message + '</p>';
+    return;
+  }
   try { localStorage.setItem(CACHE_CONFIG_CHAVE, JSON.stringify(config)); } catch (e) {}
   carregarProdutos(whatsapp);
-}).catch(function() {
-  const whatsapp = aplicarConfiguracoes({});
-  carregarProdutos(whatsapp);
+}).catch(function(erroFirestore) {
+  document.getElementById('produtos-lista').innerHTML = '<p class="loading-msg">Erro ao buscar configurações: [' + (erroFirestore.code || '?') + '] ' + erroFirestore.message + '</p>';
 });
