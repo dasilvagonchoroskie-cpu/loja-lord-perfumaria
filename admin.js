@@ -1,5 +1,5 @@
 // ===== CONFIGURAÇÃO DO IMGBB (upload automático de fotos) =====
-const IMGBB_API_KEY = 'c5f5341bea7eb7169bd38071a172a59f';
+const IMGBB_API_KEY = 'b71365f637d8ec3f7a95776e9a33a044';
 
 // Temas prontos — contraste já conferido, pra letra nunca ficar apagada
 // (a mesma lista existe em script.js pra aplicar na loja pública)
