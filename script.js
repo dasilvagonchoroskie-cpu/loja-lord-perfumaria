@@ -457,7 +457,12 @@ function aplicarConfiguracoes(config) {
 }
 
 function carregarProdutos(whatsapp) {
-  db.collection('produtos').get().then(function(snapshot) {
+  const buscaProdutos = db.collection('produtos').get();
+  const tempoLimite = new Promise(function(resolve, reject) {
+    setTimeout(function() { reject({ code: 'tempo-esgotado', message: 'A busca no banco de dados não respondeu em 15 segundos.' }); }, 15000);
+  });
+
+  Promise.race([buscaProdutos, tempoLimite]).then(function(snapshot) {
     const container = document.getElementById('produtos-lista');
     container.innerHTML = '';
 
