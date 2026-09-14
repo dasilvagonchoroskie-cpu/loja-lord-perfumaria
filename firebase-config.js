@@ -9,4 +9,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const auth = firebase.auth();
+
+// Se por qualquer motivo o modulo de autenticacao nao carregar, a loja
+// NAO pode morrer inteira. Sem ele, some so o login de cliente: a
+// vitrine, as fotos e o resto continuam funcionando.
+const auth = (typeof firebase.auth === 'function') ? firebase.auth() : null;
