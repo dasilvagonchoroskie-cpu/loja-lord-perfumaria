@@ -713,6 +713,21 @@ html[data-banner-cache="1"] #hero-art { display: none; }
   line-height: 1.5;
 }
 
+.perfil-subtitulo {
+  margin: 22px 0 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 0.95rem;
+  color: var(--accent);
+}
+.perfil-linha-dupla {
+  display: flex;
+  gap: 10px;
+}
+.perfil-linha-dupla .admin-field {
+  flex: 1;
+  min-width: 0;
+}
 .success-msg {
   color: var(--success);
   font-size: 0.8125rem;
