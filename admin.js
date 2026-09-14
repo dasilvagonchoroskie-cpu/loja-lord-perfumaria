@@ -105,7 +105,7 @@ function uploadImagemImgBB(arquivo) {
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data && data.ok && data.url) {
-          resolve({ url: data.url, deleteUrl: data.deleteUrl || '' });
+          resolve({ url: data.url, thumbUrl: data.thumbUrl || data.url, deleteUrl: data.deleteUrl || '' });
         } else {
           reject((data && data.motivo) || 'Erro ao enviar imagem.');
         }
@@ -360,6 +360,7 @@ function trocarFotoProduto(id) {
       if (dataAntiga.fotoDeleteUrl) tentarApagarDoImgBB(dataAntiga.fotoDeleteUrl);
       return db.collection('produtos').doc(id).update({
         foto: resultado.url,
+        fotoThumb: resultado.thumbUrl || resultado.url,
         fotoDeleteUrl: resultado.deleteUrl
       });
     });
@@ -381,10 +382,11 @@ function adicionarProduto() {
 
   if (!nome) { alert('Preencha o nome do perfume.'); return; }
 
-  function salvar(fotoUrl, deleteUrl) {
+  function salvar(fotoUrl, deleteUrl, fotoThumb) {
     db.collection('produtos').add({
       nome, descricao, preco,
       foto: fotoUrl || '',
+      fotoThumb: fotoThumb || fotoUrl || '',
       fotoDeleteUrl: deleteUrl || '',
       disponivel: true
     }).then(function() {
@@ -404,7 +406,7 @@ function adicionarProduto() {
     statusEl.textContent = 'Enviando foto...';
     uploadImagemImgBB(arquivo).then(function(resultado) {
       statusEl.textContent = 'Foto enviada!';
-      salvar(resultado.url, resultado.deleteUrl);
+      salvar(resultado.url, resultado.deleteUrl, resultado.thumbUrl);
     }).catch(function(erro) {
       statusEl.textContent = '';
       alert('Erro ao enviar a foto: ' + erro);
