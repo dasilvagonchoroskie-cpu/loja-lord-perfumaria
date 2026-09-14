@@ -226,6 +226,46 @@
         <label>WhatsApp</label>
         <input type="text" id="perfil-whatsapp" placeholder="5564999999999">
       </div>
+
+      <h4 class="perfil-subtitulo">Endereço de entrega</h4>
+
+      <div class="admin-field">
+        <label>Rua</label>
+        <input type="text" id="perfil-rua" placeholder="Rua, avenida ou travessa">
+      </div>
+      <div class="perfil-linha-dupla">
+        <div class="admin-field">
+          <label>Número</label>
+          <input type="text" id="perfil-numero" placeholder="123">
+        </div>
+        <div class="admin-field">
+          <label>Complemento</label>
+          <input type="text" id="perfil-complemento" placeholder="Apto, fundos">
+        </div>
+      </div>
+      <div class="admin-field">
+        <label>Bairro</label>
+        <input type="text" id="perfil-bairro">
+      </div>
+      <div class="perfil-linha-dupla">
+        <div class="admin-field">
+          <label>Cidade</label>
+          <input type="text" id="perfil-cidade">
+        </div>
+        <div class="admin-field">
+          <label>CEP</label>
+          <input type="text" id="perfil-cep" inputmode="numeric" placeholder="75600-000">
+        </div>
+      </div>
+      <div class="admin-field">
+        <label>Ponto de referência</label>
+        <input type="text" id="perfil-referencia" placeholder="Perto da padaria, portão azul...">
+      </div>
+      <div class="admin-field">
+        <label>Telefone para a entrega</label>
+        <input type="text" id="perfil-telefone" placeholder="Se for diferente do WhatsApp">
+      </div>
+
       <button class="admin-btn" type="button" onclick="salvarPerfilCliente()" style="width:100%;">Salvar</button>
       <button class="admin-btn secondary" type="button" onclick="sairCliente()" style="width:100%;margin-top:8px;">Sair</button>
       <p id="perfil-msg" class="success-msg"></p>
