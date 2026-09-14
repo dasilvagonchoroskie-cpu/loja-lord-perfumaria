@@ -713,6 +713,18 @@ html[data-banner-cache="1"] #hero-art { display: none; }
   line-height: 1.5;
 }
 
+.perfil-email-linha {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  word-break: break-all;
+}
+.perfil-ajuda {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 6px;
+}
 .perfil-subtitulo {
   margin: 22px 0 10px;
   padding-top: 16px;
