@@ -387,6 +387,48 @@ function enderecoEmTexto(cliente) {
   return linhas.join('\n');
 }
 
+// Manda o link de troca de senha pro proprio e-mail da conta. E o jeito
+// seguro: nao precisa digitar a senha antiga e nao trava se o login for
+// antigo.
+function trocarSenhaCliente() {
+  if (!auth || !auth.currentUser) return;
+  const email = auth.currentUser.email;
+  const msgEl = document.getElementById('perfil-msg');
+  auth.sendPasswordResetEmail(email).then(function() {
+    msgEl.textContent = 'Link enviado para ' + email + '. Olhe também o lixo eletrônico.';
+  }).catch(function(error) {
+    alert('Não deu para enviar: ' + error.message);
+  });
+}
+
+// Apaga os dados do cliente e o acesso dele. Pergunta duas vezes porque
+// nao tem volta.
+function excluirContaCliente() {
+  if (!auth || !auth.currentUser) return;
+  if (!confirm('Excluir sua conta?\n\nSeu nome, endereço e acesso serão apagados. Não dá para desfazer.')) return;
+  if (!confirm('Tem certeza mesmo?\n\nDepois disso você precisará se cadastrar de novo do zero.')) return;
+
+  const usuario = auth.currentUser;
+  const uid = usuario.uid;
+  const msgEl = document.getElementById('perfil-msg');
+  msgEl.textContent = 'Apagando...';
+
+  db.collection('clientes').doc(uid).delete().then(function() {
+    return usuario.delete();
+  }).then(function() {
+    CLIENTE_ATUAL = null;
+    fecharModalConta();
+    alert('Conta excluída. Você pode se cadastrar de novo quando quiser.');
+  }).catch(function(error) {
+    msgEl.textContent = '';
+    if (error.code === 'auth/requires-recent-login') {
+      alert('Por segurança, o Firebase pede um login recente pra apagar a conta.\n\nSaia, entre de novo e repita.');
+    } else {
+      alert('Erro ao excluir: ' + error.message);
+    }
+  });
+}
+
 function salvarPerfilCliente() {
   if (!auth.currentUser) return;
   const nome = document.getElementById('perfil-nome').value.trim();
@@ -421,6 +463,8 @@ auth.onAuthStateChanged(function(user) {
       );
       CLIENTE_ATUAL.uid = user.uid;
       CLIENTE_ATUAL.email = user.email;
+      const campoEmail = document.getElementById('perfil-email');
+      if (campoEmail) campoEmail.textContent = user.email || '—';
       document.getElementById('perfil-nome').value = CLIENTE_ATUAL.nome || '';
       document.getElementById('perfil-whatsapp').value = CLIENTE_ATUAL.whatsapp || '';
       CAMPOS_ENDERECO.forEach(function(campo) {
