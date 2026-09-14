@@ -1,5 +1,9 @@
-// ===== CONFIGURAÇÃO DO IMGBB (upload automático de fotos) =====
-const IMGBB_API_KEY = 'b71365f637d8ec3f7a95776e9a33a044';
+// ===== ENVIO DE FOTOS =====
+// A chave do ImgBB NÃO mora mais aqui. Código de site é público: quem
+// abre o site, lê. A foto agora vai para o nosso servidor, e é ele que
+// fala com o ImgBB, com a chave guardada em segredo. Além disso, o
+// servidor só aceita envio de quem está logado neste painel.
+const SERVIDOR_IMAGENS = 'https://fortaleza-imagens.fortalezadigitalsecurity.workers.dev';
 
 // Temas prontos — contraste já conferido, pra letra nunca ficar apagada
 // (a mesma lista existe em script.js pra aplicar na loja pública)
@@ -87,18 +91,23 @@ try {
 function uploadImagemImgBB(arquivo) {
   return new Promise(function(resolve, reject) {
     if (!arquivo) { reject('Nenhum arquivo selecionado.'); return; }
-    const formData = new FormData();
-    formData.append('image', arquivo);
-    fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_API_KEY, {
-      method: 'POST',
-      body: formData
+    if (!auth || !auth.currentUser) { reject('Faça login no painel antes de enviar fotos.'); return; }
+
+    auth.currentUser.getIdToken().then(function(token) {
+      const formData = new FormData();
+      formData.append('image', arquivo);
+      return fetch(SERVIDOR_IMAGENS, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: formData
+      });
     })
       .then(function(res) { return res.json(); })
       .then(function(data) {
-        if (data && data.success) {
-          resolve({ url: data.data.url, deleteUrl: data.data.delete_url || '' });
+        if (data && data.ok && data.url) {
+          resolve({ url: data.url, deleteUrl: data.deleteUrl || '' });
         } else {
-          reject((data && data.error && data.error.message) || 'Erro ao enviar imagem.');
+          reject((data && data.motivo) || 'Erro ao enviar imagem.');
         }
       })
       .catch(function(err) { reject(err.message || 'Erro de conexão ao enviar imagem.'); });
