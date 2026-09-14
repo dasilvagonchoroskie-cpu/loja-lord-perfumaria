@@ -218,6 +218,7 @@
 
     <div id="conta-logado" style="display:none">
       <h3>Minha conta</h3>
+      <p class="perfil-email-linha">Conectado como <strong id="perfil-email">—</strong></p>
       <div class="admin-field">
         <label>Nome</label>
         <input type="text" id="perfil-nome">
@@ -269,6 +270,13 @@
       <button class="admin-btn" type="button" onclick="salvarPerfilCliente()" style="width:100%;">Salvar</button>
       <button class="admin-btn secondary" type="button" onclick="sairCliente()" style="width:100%;margin-top:8px;">Sair</button>
       <p id="perfil-msg" class="success-msg"></p>
+
+      <h4 class="perfil-subtitulo">Segurança da conta</h4>
+      <button class="admin-btn secondary" type="button" onclick="trocarSenhaCliente()" style="width:100%;">Trocar minha senha</button>
+      <p class="perfil-ajuda">Chega um link no seu e-mail para escolher a senha nova.</p>
+
+      <button class="admin-btn danger" type="button" onclick="excluirContaCliente()" style="width:100%;margin-top:14px;">Excluir minha conta</button>
+      <p class="perfil-ajuda">Apaga seus dados e seu acesso. Não dá para desfazer. Seus pedidos já feitos no WhatsApp não são afetados.</p>
     </div>
   </div>
 </div>
