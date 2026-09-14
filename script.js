@@ -366,6 +366,12 @@ function salvarPerfilCliente() {
   });
 }
 
+if (!auth) {
+  // Sem modulo de autenticacao: esconde a area de conta de cliente e
+  // segue a vida. A loja funciona do mesmo jeito.
+  const botaoConta = document.getElementById('btn-minha-conta');
+  if (botaoConta) botaoConta.style.display = 'none';
+} else {
 auth.onAuthStateChanged(function(user) {
   const visitante = document.getElementById('conta-visitante');
   const logado = document.getElementById('conta-logado');
@@ -385,6 +391,7 @@ auth.onAuthStateChanged(function(user) {
     mostrarAbaConta('entrar');
   }
 });
+}
 
 // ===================== Configurações da loja =====================
 
