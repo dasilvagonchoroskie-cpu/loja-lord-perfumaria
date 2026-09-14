@@ -610,8 +610,13 @@ function carregarProdutos(whatsapp) {
         ? `https://wa.me/${whatsapp}?text=${mensagem}`
         : '#';
 
-      const imagemHtml = data.foto
-        ? `<img src="${escapeHtml(data.foto)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" onerror="onFotoProdutoErro(this)">`
+      // A vitrine usa a versao leve da foto. A original pode ter varios
+      // MB e deixa o quadrado preto por segundos no celular do cliente.
+      // No pedido do WhatsApp vai a original, que e a que o Juliano quer
+      // ver de perto.
+      const fotoNaVitrine = data.fotoThumb || data.foto;
+      const imagemHtml = fotoNaVitrine
+        ? `<img src="${escapeHtml(fotoNaVitrine)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" decoding="async" onload="this.classList.add('carregada')" onerror="onFotoProdutoErro(this)">`
         : `<div class="produto-img-placeholder">${PLACEHOLDER_ICON}<span>Sem foto</span></div>`;
 
       const nomeEscapadoJs = (data.nome || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
@@ -639,6 +644,11 @@ function carregarProdutos(whatsapp) {
         </div>
       `;
       container.appendChild(card);
+
+      // Se a foto ja estava no cache, o aviso de "carregou" pode nao
+      // disparar — e sem ele a imagem ficaria invisivel. Confere na mao.
+      const imgEl = card.querySelector('.produto-img');
+      if (imgEl && imgEl.complete) imgEl.classList.add('carregada');
     });
 
     if (!temProdutoVisivel) {
