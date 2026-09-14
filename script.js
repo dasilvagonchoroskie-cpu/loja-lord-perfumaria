@@ -254,8 +254,12 @@ function renderizarCarrinho() {
   const total = calcularTotalCarrinho(itens);
   totalEl.textContent = 'Total: R$ ' + total.toFixed(2).replace('.', ',');
 
+  // Cada item leva a foto logo embaixo. O link do WhatsApp so carrega
+  // texto — nao da pra anexar imagem —, entao vai o endereco da foto,
+  // que o Juliano toca e ve qual perfume e.
   const linhasMsg = itens.map(function(item) {
-    return item.quantidade + 'x ' + item.nome + ' (R$ ' + (item.preco * item.quantidade).toFixed(2).replace('.', ',') + ')';
+    const linha = item.quantidade + 'x ' + item.nome + ' (R$ ' + (item.preco * item.quantidade).toFixed(2).replace('.', ',') + ')';
+    return item.foto ? linha + '\n' + item.foto : linha;
   });
   let textoMsg = 'Olá! Quero fazer um pedido:\n' + linhasMsg.join('\n') + '\nTotal: R$ ' + total.toFixed(2).replace('.', ',');
   if (CLIENTE_ATUAL && CLIENTE_ATUAL.nome) {
@@ -267,6 +271,21 @@ function renderizarCarrinho() {
   if (enderecoTexto) {
     textoMsg += '\n\nEntregar em:\n' + enderecoTexto;
   }
+  // Pedido muito grande estoura o tamanho que o link do WhatsApp
+  // aguenta. Passando do limite, as fotos saem e o pedido vai sem elas
+  // — melhor perder a foto do que perder o pedido.
+  if (textoMsg.length > 1500) {
+    const semFotos = itens.map(function(item) {
+      return item.quantidade + 'x ' + item.nome + ' (R$ ' + (item.preco * item.quantidade).toFixed(2).replace('.', ',') + ')';
+    });
+    textoMsg = 'Olá! Quero fazer um pedido:\n' + semFotos.join('\n') +
+               '\nTotal: R$ ' + total.toFixed(2).replace('.', ',');
+    if (CLIENTE_ATUAL && CLIENTE_ATUAL.nome) {
+      textoMsg = 'Meu nome: ' + CLIENTE_ATUAL.nome + '\n' + textoMsg;
+    }
+    if (enderecoTexto) textoMsg += '\n\nEntregar em:\n' + enderecoTexto;
+  }
+
   btnWhats.href = WHATSAPP_ATUAL
     ? 'https://wa.me/' + WHATSAPP_ATUAL + '?text=' + encodeURIComponent(textoMsg)
     : '#';
@@ -439,7 +458,12 @@ function salvarPerfilCliente() {
   db.collection('clientes').doc(auth.currentUser.uid).set(paraGravar, { merge: true }).then(function() {
     CLIENTE_ATUAL = Object.assign({}, CLIENTE_ATUAL, paraGravar);
     msgEl.textContent = 'Salvo!';
-    setTimeout(function() { msgEl.textContent = ''; }, 2500);
+    // Fecha sozinho depois de mostrar o aviso: ele ja viu que deu certo
+    // e nao precisa procurar o X pra sair.
+    setTimeout(function() {
+      msgEl.textContent = '';
+      fecharModalConta();
+    }, 900);
   }).catch(function(error) {
     alert('Erro ao salvar: ' + error.message);
   });
