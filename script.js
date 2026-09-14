@@ -261,6 +261,12 @@ function renderizarCarrinho() {
   if (CLIENTE_ATUAL && CLIENTE_ATUAL.nome) {
     textoMsg = 'Meu nome: ' + CLIENTE_ATUAL.nome + '\n' + textoMsg;
   }
+  // O endereco de entrega vai junto: sem isso o Juliano teria que pedir
+  // por mensagem toda vez, e e ai que o pedido esfria.
+  const enderecoTexto = enderecoEmTexto(CLIENTE_ATUAL);
+  if (enderecoTexto) {
+    textoMsg += '\n\nEntregar em:\n' + enderecoTexto;
+  }
   btnWhats.href = WHATSAPP_ATUAL
     ? 'https://wa.me/' + WHATSAPP_ATUAL + '?text=' + encodeURIComponent(textoMsg)
     : '#';
@@ -352,13 +358,44 @@ function sairCliente() {
   auth.signOut();
 }
 
+// Campos do endereco de entrega, num lugar so, pra nao escrever a
+// lista tres vezes (salvar, carregar e montar o pedido).
+const CAMPOS_ENDERECO = ['rua', 'numero', 'complemento', 'bairro', 'cidade', 'cep', 'referencia', 'telefone'];
+
+function lerCamposDoPerfil() {
+  const dados = {};
+  CAMPOS_ENDERECO.forEach(function(campo) {
+    const el = document.getElementById('perfil-' + campo);
+    dados[campo] = el ? el.value.trim() : '';
+  });
+  return dados;
+}
+
+// Monta o endereco em linhas, do jeito que se escreve num papel.
+// Campo vazio simplesmente nao aparece.
+function enderecoEmTexto(cliente) {
+  if (!cliente) return '';
+  const linhas = [];
+  const rua = [cliente.rua, cliente.numero].filter(Boolean).join(', ');
+  if (rua) linhas.push(rua + (cliente.complemento ? ' — ' + cliente.complemento : ''));
+  const bairroCidade = [cliente.bairro, cliente.cidade].filter(Boolean).join(' — ');
+  if (bairroCidade) linhas.push(bairroCidade);
+  if (cliente.cep) linhas.push('CEP ' + cliente.cep);
+  if (cliente.referencia) linhas.push('Referência: ' + cliente.referencia);
+  const fone = cliente.telefone || cliente.whatsapp;
+  if (fone) linhas.push('Telefone: ' + fone);
+  return linhas.join('\n');
+}
+
 function salvarPerfilCliente() {
   if (!auth.currentUser) return;
   const nome = document.getElementById('perfil-nome').value.trim();
   const whatsapp = document.getElementById('perfil-whatsapp').value.trim().replace(/\D/g, '');
+  const endereco = lerCamposDoPerfil();
   const msgEl = document.getElementById('perfil-msg');
-  db.collection('clientes').doc(auth.currentUser.uid).set({ nome: nome, whatsapp: whatsapp }, { merge: true }).then(function() {
-    CLIENTE_ATUAL = Object.assign({}, CLIENTE_ATUAL, { nome: nome, whatsapp: whatsapp });
+  const paraGravar = Object.assign({ nome: nome, whatsapp: whatsapp }, endereco);
+  db.collection('clientes').doc(auth.currentUser.uid).set(paraGravar, { merge: true }).then(function() {
+    CLIENTE_ATUAL = Object.assign({}, CLIENTE_ATUAL, paraGravar);
     msgEl.textContent = 'Salvo!';
     setTimeout(function() { msgEl.textContent = ''; }, 2500);
   }).catch(function(error) {
@@ -378,9 +415,18 @@ auth.onAuthStateChanged(function(user) {
   if (user) {
     db.collection('clientes').doc(user.uid).get().then(function(doc) {
       const data = doc.exists ? doc.data() : {};
-      CLIENTE_ATUAL = { uid: user.uid, nome: data.nome || '', whatsapp: data.whatsapp || '', email: user.email };
-      document.getElementById('perfil-nome').value = CLIENTE_ATUAL.nome;
-      document.getElementById('perfil-whatsapp').value = CLIENTE_ATUAL.whatsapp;
+      CLIENTE_ATUAL = Object.assign(
+        { uid: user.uid, nome: data.nome || '', whatsapp: data.whatsapp || '', email: user.email },
+        data
+      );
+      CLIENTE_ATUAL.uid = user.uid;
+      CLIENTE_ATUAL.email = user.email;
+      document.getElementById('perfil-nome').value = CLIENTE_ATUAL.nome || '';
+      document.getElementById('perfil-whatsapp').value = CLIENTE_ATUAL.whatsapp || '';
+      CAMPOS_ENDERECO.forEach(function(campo) {
+        const el = document.getElementById('perfil-' + campo);
+        if (el) el.value = data[campo] || '';
+      });
       visitante.style.display = 'none';
       logado.style.display = 'block';
     });
