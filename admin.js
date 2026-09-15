@@ -88,12 +88,52 @@ try {
   }
 } catch (e) { /* sem cache ou cache invalido — segue com o padrão */ }
 
-function uploadImagemImgBB(arquivo) {
+// Encolhe a foto no proprio celular antes de mandar. Foto de celular tem
+// 4 ou 5 MB e 4000 pixels de largura — mais do que qualquer tela precisa.
+// Reduzindo aqui, o envio fica varias vezes mais rapido e a loja carrega
+// mais leve. Se qualquer coisa der errado, manda o arquivo original.
+const LARGURA_MAXIMA_FOTO = 1600;
+
+function encolherFoto(arquivo) {
+  return new Promise(function(resolve) {
+    if (!arquivo || !arquivo.type || arquivo.type.indexOf('image/') !== 0) { resolve(arquivo); return; }
+    if (arquivo.type === 'image/gif') { resolve(arquivo); return; }
+
+    const leitor = new FileReader();
+    leitor.onload = function() {
+      const img = new Image();
+      img.onload = function() {
+        try {
+          if (img.width <= LARGURA_MAXIMA_FOTO && arquivo.size < 900000) { resolve(arquivo); return; }
+          const escala = Math.min(1, LARGURA_MAXIMA_FOTO / img.width);
+          const tela = document.createElement('canvas');
+          tela.width = Math.round(img.width * escala);
+          tela.height = Math.round(img.height * escala);
+          tela.getContext('2d').drawImage(img, 0, 0, tela.width, tela.height);
+          tela.toBlob(function(menor) {
+            if (!menor || menor.size >= arquivo.size) { resolve(arquivo); return; }
+            resolve(new File([menor], (arquivo.name || 'foto').replace(/\.[^.]+$/, '') + '.jpg',
+                             { type: 'image/jpeg' }));
+          }, 'image/jpeg', 0.85);
+        } catch (e) { resolve(arquivo); }
+      };
+      img.onerror = function() { resolve(arquivo); };
+      img.src = leitor.result;
+    };
+    leitor.onerror = function() { resolve(arquivo); };
+    leitor.readAsDataURL(arquivo);
+  });
+}
+
+function uploadImagemImgBB(arquivoOriginal) {
   return new Promise(function(resolve, reject) {
-    if (!arquivo) { reject('Nenhum arquivo selecionado.'); return; }
+    if (!arquivoOriginal) { reject('Nenhum arquivo selecionado.'); return; }
     if (!auth || !auth.currentUser) { reject('Faça login no painel antes de enviar fotos.'); return; }
 
-    auth.currentUser.getIdToken().then(function(token) {
+    Promise.all([auth.currentUser.getIdToken(), encolherFoto(arquivoOriginal)])
+      .then(function(partes) {
+      const token = partes[0];
+      const arquivo = partes[1];
       const formData = new FormData();
       formData.append('image', arquivo);
       return fetch(SERVIDOR_IMAGENS, {
