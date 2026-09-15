@@ -29,6 +29,15 @@ const PLACEHOLDER_ICON = `
 `;
 
 function onFotoProdutoErro(imgEl) {
+  // A versao leve da foto e gerada pelo ImgBB depois do envio, e nos
+  // primeiros minutos ela pode nao existir ainda. Antes de desistir e
+  // mostrar "Sem foto", tenta a foto original.
+  const reserva = imgEl.getAttribute('data-reserva');
+  if (reserva) {
+    imgEl.removeAttribute('data-reserva');
+    imgEl.src = reserva;
+    return;
+  }
   const placeholder = document.createElement('div');
   placeholder.className = 'produto-img-placeholder';
   placeholder.innerHTML = PLACEHOLDER_ICON + '<span>Sem foto</span>';
@@ -615,8 +624,9 @@ function carregarProdutos(whatsapp) {
       // No pedido do WhatsApp vai a original, que e a que o Juliano quer
       // ver de perto.
       const fotoNaVitrine = data.fotoThumb || data.foto;
+      const fotoReserva = (data.fotoThumb && data.foto && data.foto !== data.fotoThumb) ? data.foto : '';
       const imagemHtml = fotoNaVitrine
-        ? `<img src="${escapeHtml(fotoNaVitrine)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" decoding="async" onload="this.classList.add('carregada')" onerror="onFotoProdutoErro(this)">`
+        ? `<img src="${escapeHtml(fotoNaVitrine)}" data-reserva="${escapeHtml(fotoReserva)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" decoding="async" onload="this.classList.add('carregada')" onerror="onFotoProdutoErro(this)">`
         : `<div class="produto-img-placeholder">${PLACEHOLDER_ICON}<span>Sem foto</span></div>`;
 
       const nomeEscapadoJs = (data.nome || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
