@@ -630,7 +630,7 @@ function carregarProdutos(whatsapp) {
       const fotoNaVitrine = data.foto || data.fotoThumb;
       const fotoReserva = (data.fotoThumb && data.foto && data.foto !== data.fotoThumb) ? data.fotoThumb : '';
       const imagemHtml = fotoNaVitrine
-        ? `<img src="${escapeHtml(fotoNaVitrine)}" data-reserva="${escapeHtml(fotoReserva)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" decoding="async" onload="this.classList.add('carregada')" onerror="onFotoProdutoErro(this)">`
+        ? `<img src="${escapeHtml(fotoNaVitrine)}" data-reserva="${escapeHtml(fotoReserva)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" onerror="onFotoProdutoErro(this)">`
         : `<div class="produto-img-placeholder">${PLACEHOLDER_ICON}<span>Sem foto</span></div>`;
 
       const nomeEscapadoJs = (data.nome || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
@@ -659,10 +659,6 @@ function carregarProdutos(whatsapp) {
       `;
       container.appendChild(card);
 
-      // Se a foto ja estava no cache, o aviso de "carregou" pode nao
-      // disparar — e sem ele a imagem ficaria invisivel. Confere na mao.
-      const imgEl = card.querySelector('.produto-img');
-      if (imgEl && imgEl.complete) imgEl.classList.add('carregada');
     });
 
     if (!temProdutoVisivel) {
