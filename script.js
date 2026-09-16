@@ -623,8 +623,12 @@ function carregarProdutos(whatsapp) {
       // MB e deixa o quadrado preto por segundos no celular do cliente.
       // No pedido do WhatsApp vai a original, que e a que o Juliano quer
       // ver de perto.
-      const fotoNaVitrine = data.fotoThumb || data.foto;
-      const fotoReserva = (data.fotoThumb && data.foto && data.foto !== data.fotoThumb) ? data.foto : '';
+      // A foto ja e encolhida no celular antes de enviar (uns 300 KB),
+      // entao a ORIGINAL e usada direto. A versao leve do ImgBB e gerada
+      // por eles minutos depois do envio, e depender dela fazia a foto
+      // nova demorar a aparecer. Ela fica so como reserva.
+      const fotoNaVitrine = data.foto || data.fotoThumb;
+      const fotoReserva = (data.fotoThumb && data.foto && data.foto !== data.fotoThumb) ? data.fotoThumb : '';
       const imagemHtml = fotoNaVitrine
         ? `<img src="${escapeHtml(fotoNaVitrine)}" data-reserva="${escapeHtml(fotoReserva)}" alt="${escapeHtml(data.nome || '')}" class="produto-img" loading="lazy" decoding="async" onload="this.classList.add('carregada')" onerror="onFotoProdutoErro(this)">`
         : `<div class="produto-img-placeholder">${PLACEHOLDER_ICON}<span>Sem foto</span></div>`;
