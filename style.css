@@ -267,13 +267,9 @@ html[data-banner-cache="1"] #hero-art { display: none; }
   border: 1px solid var(--border);
 }
 
-/* A foto entra suave em vez de estalar na tela quando termina de
-   carregar. O quadrado ja fica na cor do painel, nao preto. */
-.produto-img {
-  opacity: 0;
-  transition: opacity .25s ease;
-}
-.produto-img.carregada { opacity: 1; }
+/* Sem transparencia aqui. Uma animacao de entrada dependia de um aviso
+   do navegador para revelar a foto — e quando esse aviso nao chegava, a
+   foto ficava invisivel. Enfeite nunca pode esconder conteudo. */
 
 .produto-img-placeholder {
   display: flex;
